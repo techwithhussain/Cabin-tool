@@ -1,0 +1,229 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Services;
+
+use App\Core\Config;
+
+/**
+ * ImageService – Image Upload, Validation, Compression & Storage
+ *
+ * Validates MIME type via GD (not just file extension).
+ * Re-encodes images through GD to strip EXIF data and malicious payloads.
+ * Stores images outside the webroot in storage/uploads/{slug}/.
+ */
+class ImageService
+{
+    private const ALLOWED_MIME = [
+        'image/jpeg' => ['jpg', IMAGETYPE_JPEG],
+        'image/png'  => ['png', IMAGETYPE_PNG],
+        'image/gif'  => ['gif', IMAGETYPE_GIF],
+        'image/webp' => ['webp', IMAGETYPE_WEBP],
+    ];
+
+    private const MAX_WIDTH  = 2400;
+    private const MAX_HEIGHT = 2400;
+    private const JPEG_QUALITY = 82;
+    private const PNG_QUALITY  = 6;
+
+    private int    $maxFileSize;
+    private string $uploadBasePath;
+
+    public function __construct()
+    {
+        $this->maxFileSize    = (int) Config::env('MAX_UPLOAD_SIZE', 10485760);
+        $this->uploadBasePath = BASE_PATH . '/' . Config::env('UPLOAD_PATH', 'storage/uploads');
+    }
+
+    /**
+     * Process and store an uploaded image.
+     *
+     * @param array  $file    $_FILES entry
+     * @param string $noteSlug
+     * @return array{filename: string, original_name: string, mime_type: string, size_bytes: int, width: int, height: int, storage_path: string}
+     */
+    public function process(array $file, string $noteSlug): array
+    {
+        $this->validateUpload($file);
+
+        // Create note-specific directory
+        $dir = $this->uploadBasePath . '/' . $noteSlug;
+        if (!is_dir($dir)) {
+            mkdir($dir, 0750, true);
+        }
+
+        // Generate a unique filename
+        $extension = $this->detectExtension($file['tmp_name']);
+        $filename  = bin2hex(random_bytes(16)) . '.' . $extension;
+        $destPath  = $dir . '/' . $filename;
+
+        // Re-encode through GD (strips EXIF, sanitises)
+        [$width, $height] = $this->reEncode($file['tmp_name'], $destPath, $extension);
+
+        $storagePath = Config::env('UPLOAD_PATH', 'storage/uploads') . '/' . $noteSlug . '/' . $filename;
+
+        return [
+            'filename'      => $filename,
+            'original_name' => $this->sanitizeFilename($file['name']),
+            'mime_type'     => mime_content_type($destPath),
+            'size_bytes'    => filesize($destPath),
+            'width'         => $width,
+            'height'        => $height,
+            'storage_path'  => $storagePath,
+        ];
+    }
+
+    /**
+     * Delete all images for a note
+     */
+    public function deleteNoteImages(string $noteSlug): void
+    {
+        $dir = $this->uploadBasePath . '/' . $noteSlug;
+
+        if (is_dir($dir)) {
+            $files = glob($dir . '/*');
+            foreach ($files ?: [] as $file) {
+                if (is_file($file)) unlink($file);
+            }
+            rmdir($dir);
+        }
+    }
+
+    /**
+     * Get the absolute path of a stored image
+     */
+    public function getAbsolutePath(string $storagePath): string
+    {
+        return BASE_PATH . '/' . ltrim($storagePath, '/');
+    }
+
+    // ─────────────────────────────────────────────
+    // Validation
+    // ─────────────────────────────────────────────
+
+    private function validateUpload(array $file): void
+    {
+        if (!isset($file['tmp_name']) || $file['error'] !== UPLOAD_ERR_OK) {
+            throw new \InvalidArgumentException('File upload error: ' . ($file['error'] ?? 'unknown'));
+        }
+
+        if ($file['size'] > $this->maxFileSize) {
+            $maxMB = round($this->maxFileSize / 1048576, 1);
+            throw new \InvalidArgumentException("File exceeds maximum size of {$maxMB}MB.");
+        }
+
+        // Validate via GD (not just Content-Type or extension)
+        $imageInfo = @getimagesize($file['tmp_name']);
+
+        if ($imageInfo === false) {
+            throw new \InvalidArgumentException('Uploaded file is not a valid image.');
+        }
+
+        $mimeType = $imageInfo['mime'];
+        if (!array_key_exists($mimeType, self::ALLOWED_MIME)) {
+            throw new \InvalidArgumentException('Image type not allowed. Accepted: JPG, PNG, GIF, WebP.');
+        }
+
+        // Virus scan hook (stub – integrate ClamAV here if needed)
+        $this->virusScanHook($file['tmp_name']);
+    }
+
+    private function detectExtension(string $tmpPath): string
+    {
+        $imageInfo = getimagesize($tmpPath);
+        $mimeType  = $imageInfo['mime'] ?? '';
+
+        return self::ALLOWED_MIME[$mimeType][0] ?? 'jpg';
+    }
+
+    // ─────────────────────────────────────────────
+    // GD Re-encoding (strips EXIF/metadata)
+    // ─────────────────────────────────────────────
+
+    private function reEncode(string $srcPath, string $destPath, string $extension): array
+    {
+        $imageInfo = getimagesize($srcPath);
+        $origType  = $imageInfo[2]; // IMAGETYPE_*
+        $origW     = $imageInfo[0];
+        $origH     = $imageInfo[1];
+
+        // Load image via GD
+        $src = match ($origType) {
+            IMAGETYPE_JPEG => @imagecreatefromjpeg($srcPath),
+            IMAGETYPE_PNG  => @imagecreatefrompng($srcPath),
+            IMAGETYPE_GIF  => @imagecreatefromgif($srcPath),
+            IMAGETYPE_WEBP => @imagecreatefromwebp($srcPath),
+            default        => false,
+        };
+
+        if ($src === false) {
+            throw new \RuntimeException('Could not process image with GD.');
+        }
+
+        // Resize if needed
+        [$newW, $newH] = $this->calculateDimensions($origW, $origH);
+
+        if ($newW !== $origW || $newH !== $origH) {
+            $dst = imagecreatetruecolor($newW, $newH);
+
+            // Preserve transparency for PNG/WebP
+            if (in_array($origType, [IMAGETYPE_PNG, IMAGETYPE_WEBP])) {
+                imagealphablending($dst, false);
+                imagesavealpha($dst, true);
+                $transparent = imagecolorallocatealpha($dst, 0, 0, 0, 127);
+                imagefill($dst, 0, 0, $transparent);
+            }
+
+            imagecopyresampled($dst, $src, 0, 0, 0, 0, $newW, $newH, $origW, $origH);
+            imagedestroy($src);
+            $src = $dst;
+        }
+
+        // Save (strips all metadata including EXIF)
+        $saved = match ($extension) {
+            'jpg', 'jpeg' => imagejpeg($src, $destPath, self::JPEG_QUALITY),
+            'png'         => imagepng($src, $destPath, self::PNG_QUALITY),
+            'gif'         => imagegif($src, $destPath),
+            'webp'        => imagewebp($src, $destPath, self::JPEG_QUALITY),
+            default       => false,
+        };
+
+        imagedestroy($src);
+
+        if (!$saved) {
+            throw new \RuntimeException('Failed to save processed image.');
+        }
+
+        return [$newW, $newH];
+    }
+
+    private function calculateDimensions(int $width, int $height): array
+    {
+        if ($width <= self::MAX_WIDTH && $height <= self::MAX_HEIGHT) {
+            return [$width, $height];
+        }
+
+        $ratio = min(self::MAX_WIDTH / $width, self::MAX_HEIGHT / $height);
+
+        return [(int) round($width * $ratio), (int) round($height * $ratio)];
+    }
+
+    private function sanitizeFilename(string $name): string
+    {
+        // Strip path components and null bytes
+        $name = basename($name);
+        $name = preg_replace('/[^\w.\- ]/', '', $name);
+        return substr($name, 0, 255);
+    }
+
+    /**
+     * Virus scan stub – integrate ClamAV or VirusTotal API here.
+     * @throws \RuntimeException if malicious file detected
+     */
+    private function virusScanHook(string $filePath): void
+    {
+        // TODO v2: integrate ClamAV via exec('clamscan --no-summary %s', escapeshellarg($filePath))
+        // For now, this is a no-op stub
+    }
+}

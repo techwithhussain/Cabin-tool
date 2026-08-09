@@ -1,0 +1,25 @@
+# Environment & Credentials
+.env
+.env.backup
+*.env
+
+# Deployment archives & scratch
+cabin-deploy.zip
+scratch/
+
+# Storage uploads, logs & cache
+storage/uploads/*
+!storage/uploads/.gitkeep
+storage/logs/*
+!storage/logs/.gitkeep
+storage/cache/*
+!storage/cache/.gitkeep
+
+# Vendor dependencies
+/vendor/
+
+# OS / IDE files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

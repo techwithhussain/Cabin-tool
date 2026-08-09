@@ -1,0 +1,17 @@
+# Redirect all traffic to public/ directory
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L,QSA]
+</IfModule>
+
+# Deny direct access to sensitive files
+<FilesMatch "\.(env|json|sql|md|log|sh|gitignore)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Deny access to app/, config/, database/, storage/, routes/
+<IfModule mod_rewrite.c>
+    RewriteRule ^(app|config|database|storage|routes|vendor|scripts)(/.*)?$ - [F,L]
+</IfModule>

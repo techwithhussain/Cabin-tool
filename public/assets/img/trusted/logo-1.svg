@@ -1,0 +1,5 @@
+<svg width="110" height="28" viewBox="0 0 110 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="4" width="20" height="20" rx="6" fill="#A8998A"/>
+  <path d="M6 14l4 4 8-8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="28" y="19" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#A8998A">Nexora</text>
+</svg>
