@@ -35,7 +35,8 @@ class Config
     private static function loadEnv(string $path): void
     {
         if (!file_exists($path)) {
-            throw new \RuntimeException('.env file not found. Copy .env.example to .env and configure it.');
+            // In cloud environments like Vercel, env variables come directly from getenv() / $_ENV
+            return;
         }
 
         $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
