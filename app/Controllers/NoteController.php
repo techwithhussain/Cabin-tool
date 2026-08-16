@@ -172,13 +172,6 @@ class NoteController
             }
             unset($_SESSION['pending_images'][$request->body('upload_session', '')]);
 
-            // Audit log
-            $this->audit->log('note_created', $slug, $request->ipHash(), $request->userAgent(), [
-                'has_password'    => !empty($password),
-                'burn_after_read' => $burnAfterRead,
-                'expiry'          => $expiryOption,
-            ]);
-
             // Grant creator session access for subsequent editing/auto-saves
             if (!empty($password)) {
                 $sessionKey = 'note_access_' . hash('sha256', $slug);

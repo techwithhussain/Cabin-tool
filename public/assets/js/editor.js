@@ -376,14 +376,14 @@ try {
         successModal.style.display = 'flex';
     }
 
-    // Debounced Real-Time Auto-Save on typing or option change
+    // Debounced Real-Time Auto-Save on typing or option change (200ms = near-instant)
     const triggerAutoSave = () => {
         clearTimeout(autoSaveTimer);
         const len = noteTextarea.value.trim().length;
         if (len > 0) {
             autoSaveTimer = setTimeout(() => {
                 performSave(false);
-            }, 500);
+            }, 200);
         }
     };
 

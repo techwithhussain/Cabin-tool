@@ -80,7 +80,15 @@ class Response
         $content = ob_get_clean();
 
         // Render the layout with $content available
-        require $layoutPath;
+        // Enable output compression for faster delivery
+        if (!headers_sent() && str_contains($_SERVER['HTTP_ACCEPT_ENCODING'] ?? '', 'gzip')) {
+            header('Content-Encoding: gzip');
+            ob_start('ob_gzhandler');
+            require $layoutPath;
+            ob_end_flush();
+        } else {
+            require $layoutPath;
+        }
     }
 
     /**
