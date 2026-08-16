@@ -88,4 +88,11 @@ function registerWebRoutes(Router $router): void
         $router->post('/admin/logout',   [AdminController::class, 'logout'], [CsrfMiddleware::class]);
         $router->post('/admin/note/{slug}/delete', [AdminController::class, 'deleteNote'], [CsrfMiddleware::class]);
     });
+
+    // ─────────────────────────────────────────────
+    // Direct Custom Slug Routing (e.g. cabinn.in/hello)
+    // If note exists -> show note (or password lock)
+    // If note does not exist -> open editor with slug pre-filled!
+    // ─────────────────────────────────────────────
+    $router->get('/{slug}', [NoteController::class, 'handleDirectSlug']);
 }

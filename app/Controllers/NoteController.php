@@ -58,6 +58,43 @@ class NoteController
             'maxImages'     => (int) Config::env('MAX_IMAGES_PER_NOTE', 5),
             'maxNoteLen'    => (int) Config::env('MAX_NOTE_LENGTH', 50000),
             'maxUploadMB'   => round(Config::env('MAX_UPLOAD_SIZE', 10485760) / 1048576, 0),
+            'customSlug'    => '',
+        ], 'minimal');
+    }
+
+    /**
+     * Direct Custom Slug handler (e.g. cabinn.in/hello)
+     * If note exists -> show note (or password gate)
+     * If not exists -> open editor with custom slug pre-filled!
+     */
+    public function handleDirectSlug(Request $request, Response $response): void
+    {
+        $slug = trim($request->param('slug', ''));
+        $reserved = ['create', 'note', 'admin', 'image', 'cron', 'login', 'dashboard', 'api', 'logout', 'setup', 'uploads', 'assets', 'favicon.ico', 'robots.txt'];
+
+        if (in_array(strtolower($slug), $reserved, true)) {
+            $response->error(404, 'Page not found');
+            return;
+        }
+
+        $note = $this->getNotes()->findBySlug($slug);
+
+        // If note exists and is active (not deleted or expired)
+        if ($note && !$note->isDeleted() && !$note->isExpired && !$this->expiry->isExpired($note->expiresAt)) {
+            $this->view($request, $response);
+            return;
+        }
+
+        // If note does not exist -> Open workspace editor pre-filled with this slug!
+        $response->view('workspace.create', [
+            'pageTitle'     => "Create Note – cabinn.in/$slug",
+            'pageDesc'      => 'Create a private, encrypted note. Set expiry, add password, upload images.',
+            'csrfToken'     => $this->csrf->getToken(),
+            'expiryOptions' => ExpiryService::OPTIONS,
+            'maxImages'     => (int) Config::env('MAX_IMAGES_PER_NOTE', 5),
+            'maxNoteLen'    => (int) Config::env('MAX_NOTE_LENGTH', 50000),
+            'maxUploadMB'   => round(Config::env('MAX_UPLOAD_SIZE', 10485760) / 1048576, 0),
+            'customSlug'    => $slug,
         ], 'minimal');
     }
 

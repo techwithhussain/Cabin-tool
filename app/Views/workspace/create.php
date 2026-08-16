@@ -67,6 +67,7 @@
                         name="custom_slug"
                         class="settings-input"
                         placeholder="e.g. my-secret-note"
+                        value="<?= htmlspecialchars($customSlug ?? '') ?>"
                         maxlength="24"
                         pattern="[a-zA-Z0-9_-]+"
                         autocomplete="off"
