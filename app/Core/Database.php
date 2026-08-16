@@ -40,6 +40,11 @@ class Database
             \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES $charset COLLATE utf8mb4_unicode_ci",
         ];
 
+        $ssl = Config::env('DB_SSL', 'false');
+        if ($ssl === 'true' || $ssl === true || str_contains((string)$host, 'tidbcloud.com') || str_contains((string)$host, 'aivencloud.com')) {
+            $options[\PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
+        }
+
         try {
             $this->pdo = new \PDO($dsn, $user, $pass, $options);
         } catch (\PDOException $e) {
