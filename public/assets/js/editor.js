@@ -25,38 +25,10 @@
     update();
 })();
 
-// ─────────────────────────────────────────────
-// Auto-Save Draft to LocalStorage
-// ─────────────────────────────────────────────
-(function initDraftSave() {
-    const textarea = document.getElementById('noteContent');
-    const indicator = document.getElementById('draftIndicator');
-    if (!textarea) return;
-
-    const DRAFT_KEY = 'cabin_draft_v1';
-    let   saveTimer = null;
-
-    // Restore draft on load
-    const saved = localStorage.getItem(DRAFT_KEY);
-    if (saved && !textarea.value) {
-        textarea.value = saved;
-        // Trigger update events
-        textarea.dispatchEvent(new Event('input'));
-    }
-
-    const saveDraft = () => {
-        localStorage.setItem(DRAFT_KEY, textarea.value);
-        if (indicator) {
-            indicator.style.display = 'flex';
-            setTimeout(() => indicator.style.display = 'none', 2000);
-        }
-    };
-
-    textarea.addEventListener('input', () => {
-        clearTimeout(saveTimer);
-        saveTimer = setTimeout(saveDraft, 1500);
-    });
-})();
+// Clear any stale local storage drafts so every new note starts completely fresh
+try {
+    localStorage.removeItem('cabin_draft_v1');
+} catch (e) {}
 
 // ─────────────────────────────────────────────
 // Image Upload & Dropzone
