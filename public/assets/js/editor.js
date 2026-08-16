@@ -117,6 +117,7 @@
 
     async function uploadFile(file) {
         const itemEl = addUploadItem(file);
+        const previewUrl = URL.createObjectURL(file);
         if (progressWrap) progressWrap.style.display = 'block';
         if (progressBar)  progressBar.style.width    = '0%';
 
@@ -133,6 +134,7 @@
 
             if (result.success) {
                 const data = result.data;
+                data.previewUrl = data.url || previewUrl;
                 uploadedFiles.push(data);
                 updateUploadItem(itemEl, 'ok', data.size || '–');
                 addToImageStrip(data, uploadedFiles.length - 1);
@@ -204,8 +206,9 @@
 
         const thumb = document.createElement('div');
         thumb.className = 'image-strip-thumb';
+        const imgSrc = data.previewUrl || data.url || '';
         thumb.innerHTML = `
-            <img src="${escHtml(data.url || '#')}" alt="${escHtml(data.original_name || '')}">
+            <img src="${escHtml(imgSrc)}" alt="${escHtml(data.original_name || '')}">
             <button class="image-strip-thumb__remove" data-index="${index}" aria-label="Remove image">✕</button>
         `;
 
