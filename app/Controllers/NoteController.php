@@ -284,7 +284,15 @@ class NoteController
     {
         $slug     = $request->param('slug');
         $password = $request->body('password', '');
-        $note     = $this->getNotes()->findBySlug($slug);
+
+        // Brute-force protection: Rate limit password attempts
+        if (!$this->rateLimit->check($request->ipHash(), 'password')) {
+            $retryAfter = $this->rateLimit->getRetryAfter($request->ipHash(), 'password');
+            $response->jsonError("Too many failed attempts. Please try again in {$retryAfter} seconds.", 429);
+            return;
+        }
+
+        $note = $this->getNotes()->findBySlug($slug);
 
         if (!$note || $note->isDeleted() || $note->isExpired) {
             $response->jsonError('Note not found or expired.', 404);
