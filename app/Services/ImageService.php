@@ -47,10 +47,19 @@ class ImageService
     {
         $this->validateUpload($file);
 
+        // Resolve writable directory (fallback to sys temp dir on serverless/read-only hosts)
+        $baseDir = $this->uploadBasePath;
+        if (!is_dir($baseDir) && !@mkdir($baseDir, 0755, true)) {
+            $baseDir = sys_get_temp_dir() . '/cabin_uploads';
+            if (!is_dir($baseDir)) {
+                @mkdir($baseDir, 0755, true);
+            }
+        }
+
         // Create note-specific directory
-        $dir = $this->uploadBasePath . '/' . $noteSlug;
+        $dir = $baseDir . '/' . $noteSlug;
         if (!is_dir($dir)) {
-            mkdir($dir, 0750, true);
+            @mkdir($dir, 0755, true);
         }
 
         // Generate a unique filename
@@ -62,15 +71,18 @@ class ImageService
         [$width, $height] = $this->reEncode($file['tmp_name'], $destPath, $extension);
 
         $storagePath = Config::env('UPLOAD_PATH', 'storage/uploads') . '/' . $noteSlug . '/' . $filename;
+        $rawBytes    = file_get_contents($destPath);
+        $dataBase64  = $rawBytes !== false ? base64_encode($rawBytes) : null;
 
         return [
             'filename'      => $filename,
             'original_name' => $this->sanitizeFilename($file['name']),
-            'mime_type'     => mime_content_type($destPath),
-            'size_bytes'    => filesize($destPath),
+            'mime_type'     => mime_content_type($destPath) ?: ('image/' . $extension),
+            'size_bytes'    => filesize($destPath) ?: strlen($rawBytes ?: ''),
             'width'         => $width,
             'height'        => $height,
             'storage_path'  => $storagePath,
+            'data_base64'   => $dataBase64,
         ];
     }
 

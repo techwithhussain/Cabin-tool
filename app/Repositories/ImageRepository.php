@@ -29,8 +29,8 @@ class ImageRepository
     {
         $this->db->execute(
             'INSERT INTO note_images
-             (note_id, note_slug, filename, original_name, mime_type, size_bytes, width, height, storage_path, created_at)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)',
+             (note_id, note_slug, filename, original_name, mime_type, size_bytes, width, height, storage_path, data_base64, created_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)',
             [
                 $noteId,
                 $noteSlug,
@@ -40,7 +40,8 @@ class ImageRepository
                 $imageData['size_bytes'],
                 $imageData['width']  ?? null,
                 $imageData['height'] ?? null,
-                $imageData['storage_path'],
+                $imageData['storage_path'] ?? '',
+                $imageData['data_base64']  ?? null,
             ]
         );
 

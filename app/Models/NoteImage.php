@@ -21,6 +21,7 @@ class NoteImage
         public readonly ?int   $height,
         public readonly string $storagePath,
         public readonly string $createdAt,
+        public readonly ?string $dataBase64 = null,
     ) {}
 
     public static function fromRow(array $row): self
@@ -35,8 +36,9 @@ class NoteImage
             sizeBytes:    (int) $row['size_bytes'],
             width:        isset($row['width']) ? (int) $row['width'] : null,
             height:       isset($row['height']) ? (int) $row['height'] : null,
-            storagePath:  $row['storage_path'],
+            storagePath:  $row['storage_path'] ?? '',
             createdAt:    $row['created_at'],
+            dataBase64:   $row['data_base64'] ?? null,
         );
     }
 

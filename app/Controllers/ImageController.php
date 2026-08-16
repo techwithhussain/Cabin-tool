@@ -77,7 +77,7 @@ class ImageController
             } catch (\InvalidArgumentException $e) {
                 $response->jsonError($e->getMessage(), 422);
             } catch (\Throwable $e) {
-                $response->jsonError('Image upload failed.', 500);
+                $response->jsonError('Image upload failed: ' . $e->getMessage(), 500);
             }
 
             return;
@@ -110,7 +110,7 @@ class ImageController
         } catch (\InvalidArgumentException $e) {
             $response->jsonError($e->getMessage(), 422);
         } catch (\Throwable $e) {
-            $response->jsonError('Image upload failed.', 500);
+            $response->jsonError('Image upload failed: ' . $e->getMessage(), 500);
         }
     }
 
@@ -145,20 +145,30 @@ class ImageController
         }
 
         $absPath = $this->imageService->getAbsolutePath($image->storagePath);
-        if (!file_exists($absPath)) {
-            $response->error(404, 'Image file not found.');
-            return;
+        if (file_exists($absPath)) {
+            $mimeType = mime_content_type($absPath) ?: $image->mimeType;
+            header('Content-Type: ' . $mimeType);
+            header('Content-Length: ' . filesize($absPath));
+            header('Cache-Control: private, max-age=3600');
+            header('X-Content-Type-Options: nosniff');
+            header('Content-Disposition: inline; filename="' . addslashes($image->originalName) . '"');
+            readfile($absPath);
+            exit;
         }
 
-        // Serve the file
-        $mimeType = mime_content_type($absPath);
-        header('Content-Type: ' . $mimeType);
-        header('Content-Length: ' . filesize($absPath));
-        header('Cache-Control: private, max-age=3600');
-        header('X-Content-Type-Options: nosniff');
-        header('Content-Disposition: inline; filename="' . addslashes($image->originalName) . '"');
-        readfile($absPath);
-        exit;
+        // Fallback: Serve directly from database base64 payload (for serverless environments)
+        if (!empty($image->dataBase64)) {
+            $binary = base64_decode($image->dataBase64);
+            header('Content-Type: ' . $image->mimeType);
+            header('Content-Length: ' . strlen($binary));
+            header('Cache-Control: private, max-age=3600');
+            header('X-Content-Type-Options: nosniff');
+            header('Content-Disposition: inline; filename="' . addslashes($image->originalName) . '"');
+            echo $binary;
+            exit;
+        }
+
+        $response->error(404, 'Image file not found.');
     }
 
     private function humanSize(int $bytes): string
