@@ -315,6 +315,8 @@ class NoteController
             $this->audit->log('password_ok', $slug, $request->ipHash(), $request->userAgent());
             $response->jsonSuccess(null, 'Password correct. Redirecting...');
         } else {
+            // Mitigate timing attacks and rapid brute-force bots
+            usleep(200000);
             $this->audit->log('password_failed', $slug, $request->ipHash(), $request->userAgent());
             $response->jsonError('Incorrect password. Please try again.', 401);
         }
