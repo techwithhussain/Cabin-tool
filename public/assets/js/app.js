@@ -120,18 +120,24 @@ const Cabin = {
 };
 
 // ─────────────────────────────────────────────
-// Navbar scroll effect
+// Navbar scroll effect (Reflow-Optimized with RAF)
 // ─────────────────────────────────────────────
 (function initNavbar() {
     const navbar = document.getElementById('navbar');
     if (!navbar) return;
 
-    const onScroll = () => {
+    let ticking = false;
+    const update = () => {
         navbar.classList.toggle('scrolled', window.scrollY > 20);
+        ticking = false;
     };
 
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(update);
+            ticking = true;
+        }
+    }, { passive: true });
 })();
 
 // ─────────────────────────────────────────────

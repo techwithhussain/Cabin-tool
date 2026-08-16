@@ -1,0 +1,8 @@
+# Cabin (cabinn.in)
+> Secure, encrypted, ephemeral note-sharing tool by Tech With Hussain.
+
+## Overview
+Cabin allows users to create encrypted notes, attach images, set self-destruct timers, and password-protect notes.
+
+## Author
+Created by Tech With Hussain (https://techwithhussain.online/)

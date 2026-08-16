@@ -10,10 +10,12 @@
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
 
-    <!-- Fonts -->
+    <!-- Fonts (Non-blocking with font-display: swap) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"></noscript>
 
     <!-- CSS -->
     <link rel="stylesheet" href="/assets/css/app.css">
@@ -50,8 +52,8 @@
         <?= $content ?>
     </main>
 
-    <script src="/assets/js/app.js"></script>
-    <script src="/assets/js/editor.js"></script>
-    <script src="/assets/js/admin.js"></script>
+    <script src="/assets/js/app.js" defer></script>
+    <script src="/assets/js/editor.js" defer></script>
+    <script src="/assets/js/admin.js" defer></script>
 </body>
 </html>

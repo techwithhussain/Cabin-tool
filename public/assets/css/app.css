@@ -1009,7 +1009,7 @@ input, textarea, select {
 ────────────────────────────────────────── */
 .footer {
     background: var(--color-text-primary);
-    color: rgba(255,255,255,0.7);
+    color: #cbd5e1;
     padding: var(--space-16) 0 var(--space-8);
 }
 
@@ -1037,6 +1037,7 @@ input, textarea, select {
     line-height: var(--line-height-relaxed);
     max-width: 300px;
     margin-bottom: var(--space-6);
+    color: #cbd5e1;
 }
 
 .footer-social {
@@ -1048,16 +1049,16 @@ input, textarea, select {
     width: 36px;
     height: 36px;
     border-radius: var(--radius-md);
-    background: rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.12);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: rgba(255,255,255,0.6);
+    color: #f1f5f9;
     transition: var(--transition-fast);
 }
 
 .footer-social a:hover {
-    background: rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.25);
     color: white;
     transform: translateY(-2px);
 }
@@ -1085,7 +1086,7 @@ input, textarea, select {
 
 .footer-col ul a {
     font-size: var(--font-size-sm);
-    color: rgba(255,255,255,0.6);
+    color: #cbd5e1;
     transition: var(--transition-fast);
 }
 
@@ -1096,16 +1097,17 @@ input, textarea, select {
 .footer-col-desc {
     font-size: var(--font-size-sm);
     line-height: var(--line-height-relaxed);
+    color: #cbd5e1;
 }
 
 .footer-bottom {
     max-width: var(--container-wide);
     margin: 0 auto;
     padding: var(--space-6) var(--space-6) 0;
-    border-top: 1px solid rgba(255,255,255,0.08);
+    border-top: 1px solid rgba(255,255,255,0.15);
     margin-top: var(--space-12);
     font-size: var(--font-size-sm);
-    color: rgba(255,255,255,0.4);
+    color: #cbd5e1;
     text-align: center;
 }
 

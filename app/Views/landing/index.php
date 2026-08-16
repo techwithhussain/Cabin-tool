@@ -200,6 +200,7 @@
 ────────────────────────────────────────── -->
 <section class="feature-badges" id="features">
     <div class="container">
+        <h2 class="sr-only">Key Security Features</h2>
         <div class="badges-grid">
             <div class="feature-badge" data-animate="fade-up" data-delay="0">
                 <div class="feature-badge__icon feature-badge__icon--blue">
