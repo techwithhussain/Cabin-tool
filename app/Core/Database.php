@@ -41,8 +41,16 @@ class Database
         ];
 
         $ssl = Config::env('DB_SSL', 'false');
-        if ($ssl === 'true' || $ssl === true || str_contains((string)$host, 'tidbcloud.com') || str_contains((string)$host, 'aivencloud.com')) {
+        $isCloudHost = str_contains((string)$host, 'tidbcloud.com') || str_contains((string)$host, 'aivencloud.com');
+
+        if ($ssl === 'true' || $ssl === true || $isCloudHost) {
             $options[\PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
+            $caCert = defined('CONFIG_PATH') ? CONFIG_PATH . '/ca.pem' : dirname(__DIR__, 2) . '/config/ca.pem';
+            if (file_exists($caCert)) {
+                $options[\PDO::MYSQL_ATTR_SSL_CA] = $caCert;
+            } elseif (file_exists('/etc/ssl/certs/ca-certificates.crt')) {
+                $options[\PDO::MYSQL_ATTR_SSL_CA] = '/etc/ssl/certs/ca-certificates.crt';
+            }
         }
 
         try {
@@ -169,10 +177,6 @@ class Database
     {
         return $this->pdo;
     }
-
-    // ─────────────────────────────────────────────
-    // Query Helpers
-    // ─────────────────────────────────────────────
 
     /**
      * Execute a prepared statement and return the statement
