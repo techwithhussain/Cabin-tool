@@ -39,8 +39,6 @@ class RateLimitService
      */
     public function check(string $ipHash, string $action): bool
     {
-        $this->cleanup();
-
         [$maxAttempts, $windowSeconds] = $this->limits[$action] ?? [60, 3600];
 
         $row = $this->db->fetchOne(

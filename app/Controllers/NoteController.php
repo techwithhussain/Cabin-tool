@@ -358,7 +358,6 @@ class NoteController
         }
 
         $this->getNotes()->updateContent($slug, $content);
-        $this->audit->log('note_updated', $slug, $request->ipHash(), $request->userAgent());
 
         $response->jsonSuccess(['content' => $content], 'Note updated successfully!');
     }

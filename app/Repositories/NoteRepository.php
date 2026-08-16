@@ -75,8 +75,25 @@ class NoteRepository
             ]
         );
 
-        $id   = (int) $this->db->lastInsertId();
-        $note = $this->findById($id);
+        $id = (int) $this->db->lastInsertId();
+
+        $note = new Note(
+            id: $id,
+            slug: $slug,
+            contentEncrypted: $encrypted['encrypted'],
+            contentIv: $encrypted['iv'],
+            contentTag: $encrypted['tag'],
+            passwordHash: $passwordHash,
+            expiresAt: $data['expires_at'] ?? null,
+            isExpired: false,
+            burnAfterRead: (bool) ($data['burn_after_read'] ?? false),
+            viewCount: 0,
+            creatorIpHash: $data['creator_ip_hash'],
+            ownerTokenHash: $ownerTokenData['hash'],
+            createdAt: date('Y-m-d H:i:s'),
+            updatedAt: date('Y-m-d H:i:s'),
+            deletedAt: null
+        );
 
         return [
             'note'        => $note,
