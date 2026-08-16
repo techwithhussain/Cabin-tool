@@ -156,10 +156,7 @@ class NoteController
                 'error' => $e->getMessage()
             ]);
 
-            $msg = (defined('APP_DEBUG') && APP_DEBUG)
-                ? 'Database connection error: ' . $e->getMessage()
-                : 'Failed to create note. Please verify MySQL is running and database schema is imported.';
-
+            $msg = 'Failed to create note: ' . $e->getMessage();
             $response->jsonError($msg, 500);
         }
     }

@@ -13,19 +13,19 @@ class Request
 {
     private string $method;
     private string $path;
-    private array  $query;
-    private array  $body;
-    private array  $files;
-    private array  $headers;
-    private array  $params = []; // Route parameters (set by Router)
+    private array $query;
+    private array $body;
+    private array $files;
+    private array $headers;
+    private array $params = []; // Route parameters (set by Router)
 
     public function __construct()
     {
-        $this->method  = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
-        $this->path    = $this->parsePath();
-        $this->query   = $_GET ?? [];
-        $this->body    = $this->parseBody();
-        $this->files   = $_FILES ?? [];
+        $this->method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
+        $this->path = $this->parsePath();
+        $this->query = $_GET ?? [];
+        $this->body = $this->parseBody();
+        $this->files = $_FILES ?? [];
         $this->headers = $this->parseHeaders();
     }
 
@@ -68,10 +68,22 @@ class Request
     // Accessors
     // ─────────────────────────────────────────────
 
-    public function method(): string      { return $this->method; }
-    public function path(): string        { return $this->path; }
-    public function params(): array       { return $this->params; }
-    public function setParams(array $p): void { $this->params = $p; }
+    public function method(): string
+    {
+        return $this->method;
+    }
+    public function path(): string
+    {
+        return $this->path;
+    }
+    public function params(): array
+    {
+        return $this->params;
+    }
+    public function setParams(array $p): void
+    {
+        $this->params = $p;
+    }
 
     public function param(string $key, mixed $default = null): mixed
     {
@@ -80,13 +92,15 @@ class Request
 
     public function query(string $key = null, mixed $default = null): mixed
     {
-        if ($key === null) return $this->query;
+        if ($key === null)
+            return $this->query;
         return $this->query[$key] ?? $default;
     }
 
     public function body(string $key = null, mixed $default = null): mixed
     {
-        if ($key === null) return $this->body;
+        if ($key === null)
+            return $this->body;
         return $this->body[$key] ?? $default;
     }
 
@@ -95,7 +109,10 @@ class Request
         return $this->files[$key] ?? null;
     }
 
-    public function files(): array { return $this->files; }
+    public function files(): array
+    {
+        return $this->files;
+    }
 
     public function header(string $key, mixed $default = null): mixed
     {
@@ -106,11 +123,26 @@ class Request
     // Type Checks
     // ─────────────────────────────────────────────
 
-    public function isGet(): bool    { return $this->method === 'GET'; }
-    public function isPost(): bool   { return $this->method === 'POST'; }
-    public function isDelete(): bool { return $this->method === 'DELETE'; }
-    public function isPut(): bool    { return $this->method === 'PUT'; }
-    public function isPatch(): bool  { return $this->method === 'PATCH'; }
+    public function isGet(): bool
+    {
+        return $this->method === 'GET';
+    }
+    public function isPost(): bool
+    {
+        return $this->method === 'POST';
+    }
+    public function isDelete(): bool
+    {
+        return $this->method === 'DELETE';
+    }
+    public function isPut(): bool
+    {
+        return $this->method === 'PUT';
+    }
+    public function isPatch(): bool
+    {
+        return $this->method === 'PATCH';
+    }
 
     public function isJson(): bool
     {
@@ -126,7 +158,7 @@ class Request
     public function expectsJson(): bool
     {
         return $this->isAjax() || $this->isJson() ||
-               str_contains($this->header('accept', ''), 'application/json');
+            str_contains($this->header('accept', ''), 'application/json');
     }
 
     // ─────────────────────────────────────────────
@@ -138,9 +170,9 @@ class Request
         // Check common proxy headers (validate format)
         $candidates = [
             $_SERVER['HTTP_CF_CONNECTING_IP'] ?? '',  // Cloudflare
-            $_SERVER['HTTP_X_FORWARDED_FOR']  ?? '',
-            $_SERVER['HTTP_X_REAL_IP']         ?? '',
-            $_SERVER['REMOTE_ADDR']            ?? '',
+            $_SERVER['HTTP_X_FORWARDED_FOR'] ?? '',
+            $_SERVER['HTTP_X_REAL_IP'] ?? '',
+            $_SERVER['REMOTE_ADDR'] ?? '',
         ];
 
         foreach ($candidates as $ip) {
