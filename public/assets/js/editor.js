@@ -255,6 +255,7 @@
     let currentSlug       = document.getElementById('customSlug')?.value?.trim() || '';
     let isNoteCreated     = false;
     let isSaving          = false;
+    let pendingSave       = false;
     let lastSavedContent  = '';
     let autoSaveTimer     = null;
     let createdNoteData   = null;
@@ -275,7 +276,7 @@
                 if (saveStatus.textContent === '✓ Saved') {
                     saveStatus.style.display = 'none';
                 }
-            }, 2500);
+            }, 2000);
         } else if (status === 'error') {
             saveStatus.style.display = 'inline-flex';
             saveStatus.style.color   = '#dc2626';
@@ -287,10 +288,14 @@
     async function performSave(isManualClick = false) {
         const content = noteTextarea.value.trim();
         if (!content) return;
-        if (isSaving) return;
+        if (isSaving) {
+            pendingSave = true;
+            return;
+        }
         if (!isManualClick && content === lastSavedContent) return;
 
         isSaving = true;
+        pendingSave = false;
         updateSaveStatus('saving');
 
         const expiry       = document.getElementById('expirySelect')?.value || '24h';
@@ -371,6 +376,9 @@
             if (isManualClick) Cabin.toast('Failed to save note. Please try again.', 'error');
         } finally {
             isSaving = false;
+            if (pendingSave && noteTextarea.value.trim() !== lastSavedContent) {
+                performSave(false);
+            }
         }
     }
 
@@ -393,14 +401,14 @@
         successModal.style.display = 'flex';
     }
 
-    // Debounced Real-Time Auto-Save on typing
+    // Debounced Real-Time Auto-Save on typing (fast 500ms debounce)
     noteTextarea.addEventListener('input', () => {
         clearTimeout(autoSaveTimer);
         const len = noteTextarea.value.trim().length;
         if (len > 0) {
             autoSaveTimer = setTimeout(() => {
                 performSave(false);
-            }, 800);
+            }, 500);
         }
     });
 
