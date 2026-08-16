@@ -61,7 +61,7 @@
                     </svg>
                 </div>
                 <span class="logo-text">Cabin</span>
-                <span class="logo-sub">by Tech With Hussain</span>
+                <span class="logo-sub">by <a href="https://techwithhussain.online/" target="_blank" rel="noopener noreferrer" style="color:inherit; text-decoration:none; opacity:0.9;">Tech With Hussain</a></span>
             </a>
 
             <ul class="nav-links" id="navLinks">
@@ -137,14 +137,14 @@
                     </ul>
                 </div>
                 <div class="footer-col">
-                    <h4>Made with ❤️ by<br>Tech With Hussain</h4>
+                    <h4>Made with ❤️ by<br><a href="https://techwithhussain.online/" target="_blank" rel="noopener noreferrer" style="color:var(--color-primary-light, #7c8bff); text-decoration:none; font-weight:700;">Tech With Hussain</a></h4>
                     <p class="footer-col-desc">Building simple, useful and powerful tools for everyone.</p>
                 </div>
             </div>
         </div>
 
         <div class="footer-bottom">
-            <p>© <?= date('Y') ?> Cabin by Tech With Hussain. All rights reserved.</p>
+            <p>© <?= date('Y') ?> Cabin by <a href="https://techwithhussain.online/" target="_blank" rel="noopener noreferrer" style="color:inherit; font-weight:600; text-decoration:none;">Tech With Hussain</a>. All rights reserved.</p>
         </div>
     </footer>
 

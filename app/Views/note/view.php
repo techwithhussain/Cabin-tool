@@ -108,7 +108,7 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             Create Your Own Secure Note
         </a>
-        <span class="note-footer-brand">Powered by <a href="/">Cabin</a> by Tech With Hussain</span>
+        <span class="note-footer-brand">Powered by <a href="/">Cabin</a> by <a href="https://techwithhussain.online/" target="_blank" rel="noopener noreferrer" style="color:inherit; font-weight:600; text-decoration:none;">Tech With Hussain</a></span>
     </div>
 </div>
 
