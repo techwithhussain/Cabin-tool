@@ -37,6 +37,7 @@ class EncryptionService
         } else {
             $this->key = substr(hash('sha256', $appKey, true), 0, 32);
         }
+    }
 
     /**
      * Encrypt plaintext content.
