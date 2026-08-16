@@ -143,10 +143,10 @@ class ImageService
 
     private function detectExtension(string $tmpPath): string
     {
-        $imageInfo = getimagesize($tmpPath);
+        $imageInfo = @getimagesize($tmpPath);
         $mimeType  = $imageInfo['mime'] ?? '';
 
-        return self::ALLOWED_MIME[$mimeType][0] ?? 'jpg';
+        return self::ALLOWED_MIME[$mimeType][0] ?? 'png';
     }
 
     // ─────────────────────────────────────────────
@@ -155,22 +155,34 @@ class ImageService
 
     private function reEncode(string $srcPath, string $destPath, string $extension): array
     {
-        $imageInfo = getimagesize($srcPath);
-        $origType  = $imageInfo[2]; // IMAGETYPE_*
-        $origW     = $imageInfo[0];
-        $origH     = $imageInfo[1];
+        $imageInfo = @getimagesize($srcPath);
+        $origType  = $imageInfo ? $imageInfo[2] : null;
+        $origW     = $imageInfo ? $imageInfo[0] : 0;
+        $origH     = $imageInfo ? $imageInfo[1] : 0;
+
+        // If GD extension is not loaded, copy the file directly
+        if (!extension_loaded('gd') || !function_exists('imagecreatetruecolor')) {
+            if (!copy($srcPath, $destPath)) {
+                throw new \RuntimeException('Failed to save uploaded image.');
+            }
+            return [$origW, $origH];
+        }
 
         // Load image via GD
         $src = match ($origType) {
-            IMAGETYPE_JPEG => @imagecreatefromjpeg($srcPath),
-            IMAGETYPE_PNG  => @imagecreatefrompng($srcPath),
-            IMAGETYPE_GIF  => @imagecreatefromgif($srcPath),
-            IMAGETYPE_WEBP => @imagecreatefromwebp($srcPath),
+            IMAGETYPE_JPEG => function_exists('imagecreatefromjpeg') ? @imagecreatefromjpeg($srcPath) : false,
+            IMAGETYPE_PNG  => function_exists('imagecreatefrompng')  ? @imagecreatefrompng($srcPath)  : false,
+            IMAGETYPE_GIF  => function_exists('imagecreatefromgif')  ? @imagecreatefromgif($srcPath)  : false,
+            IMAGETYPE_WEBP => function_exists('imagecreatefromwebp') ? @imagecreatefromwebp($srcPath) : false,
             default        => false,
         };
 
         if ($src === false) {
-            throw new \RuntimeException('Could not process image with GD.');
+            // Fallback: Copy directly if GD decoder is not available
+            if (!copy($srcPath, $destPath)) {
+                throw new \RuntimeException('Failed to save uploaded image.');
+            }
+            return [$origW, $origH];
         }
 
         // Resize if needed
@@ -194,17 +206,20 @@ class ImageService
 
         // Save (strips all metadata including EXIF)
         $saved = match ($extension) {
-            'jpg', 'jpeg' => imagejpeg($src, $destPath, self::JPEG_QUALITY),
-            'png'         => imagepng($src, $destPath, self::PNG_QUALITY),
-            'gif'         => imagegif($src, $destPath),
-            'webp'        => imagewebp($src, $destPath, self::JPEG_QUALITY),
+            'jpg', 'jpeg' => function_exists('imagejpeg') ? imagejpeg($src, $destPath, self::JPEG_QUALITY) : false,
+            'png'         => function_exists('imagepng')  ? imagepng($src, $destPath, self::PNG_QUALITY)   : false,
+            'gif'         => function_exists('imagegif')  ? imagegif($src, $destPath)                      : false,
+            'webp'        => function_exists('imagewebp') ? imagewebp($src, $destPath, self::JPEG_QUALITY) : false,
             default       => false,
         };
 
         imagedestroy($src);
 
         if (!$saved) {
-            throw new \RuntimeException('Failed to save processed image.');
+            // Fallback to direct copy if GD saving fails
+            if (!copy($srcPath, $destPath)) {
+                throw new \RuntimeException('Failed to save processed image.');
+            }
         }
 
         return [$newW, $newH];
