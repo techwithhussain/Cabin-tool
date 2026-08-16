@@ -234,7 +234,7 @@
 })();
 
 // ─────────────────────────────────────────────
-// Create Note Form
+// Create Note & Live Real-Time Auto-Save (like Crumple.me)
 // ─────────────────────────────────────────────
 (function initCreateNote() {
     const createBtn      = document.getElementById('createNoteBtn');
@@ -244,78 +244,181 @@
     const viewNoteLink   = document.getElementById('viewNoteLink');
     const createAnother  = document.getElementById('createAnotherBtn');
     const metaDisplay    = document.getElementById('noteMetaDisplay');
-    const ownerSection   = document.getElementById('ownerTokenSection');
     const ownerDisplay   = document.getElementById('ownerTokenDisplay');
     const copyTokenBtn   = document.getElementById('copyTokenBtn');
+    const noteTextarea   = document.getElementById('noteContent');
+    const saveStatus     = document.getElementById('saveStatus');
 
-    if (!createBtn) return;
+    if (!noteTextarea) return;
 
-    createBtn.addEventListener('click', async () => {
-        const content       = document.getElementById('noteContent')?.value?.trim();
-        const expiry       = document.getElementById('expirySelect')?.value;
-        const customSlug   = document.getElementById('customSlug')?.value?.trim();
-        const password     = document.getElementById('notePassword')?.value;
-        const burnAfterRead = document.getElementById('burnAfterRead')?.checked;
-        const uploadSession = document.getElementById('uploadSession')?.value;
+    // Detect initial custom slug if pre-filled in URL (e.g. cabinn.in/5554)
+    let currentSlug       = document.getElementById('customSlug')?.value?.trim() || '';
+    let isNoteCreated     = false;
+    let isSaving          = false;
+    let lastSavedContent  = '';
+    let autoSaveTimer     = null;
+    let createdNoteData   = null;
 
-        if (!content) {
-            Cabin.toast('Please write something in your note.', 'error');
-            document.getElementById('noteContent')?.focus();
-            return;
+    function updateSaveStatus(status) {
+        if (!saveStatus) return;
+        if (status === 'saving') {
+            saveStatus.style.display = 'inline-flex';
+            saveStatus.style.color   = '#4f5fff';
+            saveStatus.style.background = 'rgba(79, 95, 255, 0.1)';
+            saveStatus.textContent = '● Saving...';
+        } else if (status === 'saved') {
+            saveStatus.style.display = 'inline-flex';
+            saveStatus.style.color   = '#059669';
+            saveStatus.style.background = 'rgba(5, 150, 105, 0.1)';
+            saveStatus.textContent = '✓ Saved';
+            setTimeout(() => {
+                if (saveStatus.textContent === '✓ Saved') {
+                    saveStatus.style.display = 'none';
+                }
+            }, 2500);
+        } else if (status === 'error') {
+            saveStatus.style.display = 'inline-flex';
+            saveStatus.style.color   = '#dc2626';
+            saveStatus.style.background = 'rgba(220, 38, 38, 0.1)';
+            saveStatus.textContent = '⚠️ Auto-save failed';
         }
+    }
 
-        // Show loading state
-        setLoading(true);
+    async function performSave(isManualClick = false) {
+        const content = noteTextarea.value.trim();
+        if (!content) return;
+        if (isSaving) return;
+        if (!isManualClick && content === lastSavedContent) return;
+
+        isSaving = true;
+        updateSaveStatus('saving');
+
+        const expiry       = document.getElementById('expirySelect')?.value || '24h';
+        const password     = document.getElementById('notePassword')?.value || '';
+        const burnAfterRead = document.getElementById('burnAfterRead')?.checked || false;
+        const uploadSession = document.getElementById('uploadSession')?.value || '';
 
         try {
-            const formData = new URLSearchParams();
-            formData.append('_csrf_token', Cabin.csrfToken());
-            formData.append('content', content);
-            formData.append('expiry', expiry || '24h');
-            if (customSlug)    formData.append('custom_slug', customSlug);
-            if (password)      formData.append('password', password);
-            if (burnAfterRead) formData.append('burn_after_read', '1');
-            if (uploadSession) formData.append('upload_session', uploadSession);
+            if (!isNoteCreated) {
+                // Initial Note Creation
+                const formData = new URLSearchParams();
+                formData.append('_csrf_token', Cabin.csrfToken());
+                formData.append('content', content);
+                formData.append('expiry', expiry);
+                if (currentSlug)   formData.append('custom_slug', currentSlug);
+                if (password)      formData.append('password', password);
+                if (burnAfterRead) formData.append('burn_after_read', '1');
+                if (uploadSession) formData.append('upload_session', uploadSession);
 
-            const result = await Cabin.fetch('/note', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: formData.toString(),
-            });
+                const result = await Cabin.fetch('/note', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData.toString(),
+                });
 
-            if (result.success && result.data) {
-                const { url, owner_token, expires_at, expiry_label } = result.data;
+                if (result.success && result.data) {
+                    createdNoteData = result.data;
+                    currentSlug     = result.data.slug;
+                    isNoteCreated   = true;
+                    lastSavedContent = content;
 
-                // Populate modal
-                if (noteUrlInput)  noteUrlInput.value = url;
-                if (viewNoteLink)  viewNoteLink.href  = url;
+                    // Seamlessly update browser URL without refresh (e.g. cabinn.in/5554)
+                    if (window.location.pathname !== '/' + currentSlug) {
+                        window.history.replaceState(null, '', '/' + currentSlug);
+                    }
 
-                // Meta badges
-                if (metaDisplay) {
-                    const badges = [];
-                    badges.push(`<span class="badge badge--blue">🔒 Encrypted</span>`);
-                    if (expiry_label !== 'Never') badges.push(`<span class="badge badge--orange">⏱ ${expiry_label}</span>`);
-                    if (password)     badges.push(`<span class="badge badge--purple">🔑 Password</span>`);
-                    if (burnAfterRead) badges.push(`<span class="badge badge--red">🔥 Burn After Read</span>`);
-                    metaDisplay.innerHTML = badges.join('');
+                    // Update custom slug field & note URL input
+                    const slugInput = document.getElementById('customSlug');
+                    if (slugInput) slugInput.value = currentSlug;
+                    if (noteUrlInput) noteUrlInput.value = result.data.url;
+                    if (viewNoteLink) viewNoteLink.href  = result.data.url;
+
+                    updateSaveStatus('saved');
+                    localStorage.removeItem('cabin_draft_v1');
+
+                    if (isManualClick) {
+                        showSuccessModal(result.data, password, burnAfterRead);
+                    }
+                } else {
+                    updateSaveStatus('error');
+                    if (isManualClick) Cabin.toast(result.message || 'Failed to save note.', 'error');
                 }
-
-                // Clear draft
-                localStorage.removeItem('cabin_draft_v1');
-
-                // Show success modal
-                if (successModal) successModal.style.display = 'flex';
-
             } else {
-                Cabin.toast(result.message || 'Failed to create note.', 'error');
+                // Subsequent real-time content updates
+                const formData = new URLSearchParams();
+                formData.append('_csrf_token', Cabin.csrfToken());
+                formData.append('content', content);
+
+                const result = await Cabin.fetch(`/note/${currentSlug}/update`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData.toString(),
+                });
+
+                if (result.success) {
+                    lastSavedContent = content;
+                    updateSaveStatus('saved');
+                    if (isManualClick && createdNoteData) {
+                        showSuccessModal(createdNoteData, password, burnAfterRead);
+                    }
+                } else {
+                    updateSaveStatus('error');
+                    if (isManualClick) Cabin.toast(result.message || 'Failed to update note.', 'error');
+                }
             }
         } catch (err) {
-            const message = err?.message || 'Failed to create note. Please try again.';
-            Cabin.toast(message, 'error');
+            updateSaveStatus('error');
+            if (isManualClick) Cabin.toast('Failed to save note. Please try again.', 'error');
         } finally {
-            setLoading(false);
+            isSaving = false;
+        }
+    }
+
+    function showSuccessModal(data, password, burnAfterRead) {
+        if (!successModal) return;
+        const { url, owner_token, expiry_label } = data;
+
+        if (noteUrlInput)  noteUrlInput.value = url;
+        if (viewNoteLink)  viewNoteLink.href  = url;
+
+        if (metaDisplay) {
+            const badges = [];
+            badges.push(`<span class="badge badge--blue">🔒 Encrypted</span>`);
+            if (expiry_label !== 'Never') badges.push(`<span class="badge badge--orange">⏱ ${expiry_label}</span>`);
+            if (password)     badges.push(`<span class="badge badge--purple">🔑 Password</span>`);
+            if (burnAfterRead) badges.push(`<span class="badge badge--red">🔥 Burn After Read</span>`);
+            metaDisplay.innerHTML = badges.join('');
+        }
+
+        successModal.style.display = 'flex';
+    }
+
+    // Debounced Real-Time Auto-Save on typing
+    noteTextarea.addEventListener('input', () => {
+        clearTimeout(autoSaveTimer);
+        const len = noteTextarea.value.trim().length;
+        if (len > 0) {
+            autoSaveTimer = setTimeout(() => {
+                performSave(false);
+            }, 800);
         }
     });
+
+    // Manual Save / Share Button Click
+    if (createBtn) {
+        createBtn.addEventListener('click', async () => {
+            const content = noteTextarea.value.trim();
+            if (!content) {
+                Cabin.toast('Please write something in your note.', 'error');
+                noteTextarea.focus();
+                return;
+            }
+
+            setLoading(true);
+            await performSave(true);
+            setLoading(false);
+        });
+    }
 
     // Copy URL button
     if (copyUrlBtn && noteUrlInput) {
@@ -341,13 +444,20 @@
     if (createAnother && successModal) {
         createAnother.addEventListener('click', () => {
             successModal.style.display = 'none';
-            document.getElementById('noteContent').value = '';
+            noteTextarea.value = '';
             document.getElementById('notePassword').value = '';
             document.getElementById('burnAfterRead').checked = false;
             document.getElementById('expirySelect').value = '24h';
+            const slugInput = document.getElementById('customSlug');
+            if (slugInput) slugInput.value = '';
+            currentSlug = '';
+            isNoteCreated = false;
+            lastSavedContent = '';
+            createdNoteData = null;
+            window.history.replaceState(null, '', '/create');
             window.CabinUploader?.clear();
-            document.getElementById('noteContent')?.focus();
-            document.getElementById('noteContent')?.dispatchEvent(new Event('input'));
+            noteTextarea.focus();
+            noteTextarea.dispatchEvent(new Event('input'));
         });
     }
 
@@ -361,7 +471,7 @@
     function setLoading(loading) {
         const btnText    = document.getElementById('createBtnText');
         const btnLoading = document.getElementById('createBtnLoading');
-        createBtn.disabled = loading;
+        if (createBtn) createBtn.disabled = loading;
         if (btnText)    btnText.style.display    = loading ? 'none' : 'inline-flex';
         if (btnLoading) btnLoading.style.display = loading ? 'inline-flex' : 'none';
     }

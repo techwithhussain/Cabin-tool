@@ -9,7 +9,8 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2L3 7V12C3 16.55 6.84 20.74 12 22C17.16 20.74 21 16.55 21 12V7L12 2Z" fill="#4F5FFF"/></svg>
                 Create Secure Note
             </h1>
-            <div class="workspace-meta">
+            <div class="workspace-meta" style="display:flex; align-items:center; gap:8px;">
+                <span class="save-status" id="saveStatus" style="font-size:12px; font-weight:600; padding:3px 8px; border-radius:12px; display:none; transition: all 0.2s ease;"></span>
                 <span class="char-counter" id="charCounter">0 / <?= number_format($maxNoteLen) ?></span>
             </div>
         </div>

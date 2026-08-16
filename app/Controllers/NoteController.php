@@ -179,11 +179,17 @@ class NoteController
                 'expiry'          => $expiryOption,
             ]);
 
+            // Grant creator session access for subsequent editing/auto-saves
+            if (!empty($password)) {
+                $sessionKey = 'note_access_' . hash('sha256', $slug);
+                $_SESSION[$sessionKey] = true;
+            }
+
             $appUrl = rtrim(Config::env('APP_URL', ''), '/');
 
             $response->jsonSuccess([
                 'slug'        => $slug,
-                'url'         => "$appUrl/note/$slug",
+                'url'         => "$appUrl/$slug",
                 'owner_token' => $ownerToken,
                 'expires_at'  => $note->expiresAt,
                 'expiry_label'=> ExpiryService::OPTIONS[$expiryOption] ?? 'Never',
