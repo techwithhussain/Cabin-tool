@@ -321,10 +321,13 @@ try {
                     if (isManualClick) Cabin.toast(result.message || 'Failed to save note.', 'error');
                 }
             } else {
-                // Subsequent real-time content updates
+                // Subsequent real-time content & settings updates
                 const formData = new URLSearchParams();
                 formData.append('_csrf_token', Cabin.csrfToken());
                 formData.append('content', content);
+                if (password)      formData.append('password', password);
+                if (expiry)        formData.append('expiry', expiry);
+                if (burnAfterRead) formData.append('burn_after_read', '1');
 
                 const result = await Cabin.fetch(`/note/${currentSlug}/update`, {
                     method: 'POST',
@@ -373,8 +376,8 @@ try {
         successModal.style.display = 'flex';
     }
 
-    // Debounced Real-Time Auto-Save on typing (fast 500ms debounce)
-    noteTextarea.addEventListener('input', () => {
+    // Debounced Real-Time Auto-Save on typing or option change
+    const triggerAutoSave = () => {
         clearTimeout(autoSaveTimer);
         const len = noteTextarea.value.trim().length;
         if (len > 0) {
@@ -382,7 +385,25 @@ try {
                 performSave(false);
             }, 500);
         }
-    });
+    };
+
+    noteTextarea.addEventListener('input', triggerAutoSave);
+
+    const pwInput = document.getElementById('notePassword');
+    if (pwInput) {
+        pwInput.addEventListener('input', triggerAutoSave);
+        pwInput.addEventListener('change', triggerAutoSave);
+    }
+
+    const expSelect = document.getElementById('expirySelect');
+    if (expSelect) {
+        expSelect.addEventListener('change', triggerAutoSave);
+    }
+
+    const burnCheck = document.getElementById('burnAfterRead');
+    if (burnCheck) {
+        burnCheck.addEventListener('change', triggerAutoSave);
+    }
 
     // Manual Save / Share Button Click
     if (createBtn) {

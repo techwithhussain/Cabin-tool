@@ -357,7 +357,24 @@ class NoteController
             return;
         }
 
-        $this->getNotes()->updateContent($slug, $content);
+        $password      = $request->body('password', null);
+        $expiry        = $request->body('expiry', null);
+        $burnAfterRead = $request->body('burn_after_read', null);
+
+        $burnBool = $burnAfterRead !== null ? ($burnAfterRead === '1' || $burnAfterRead === 'true' || $burnAfterRead === true) : null;
+
+        $this->getNotes()->updateNote(
+            $slug,
+            $content,
+            $password,
+            $expiry,
+            $burnBool
+        );
+
+        if (!empty($password)) {
+            $sessionKey = 'note_access_' . hash('sha256', $slug);
+            $_SESSION[$sessionKey] = true;
+        }
 
         $response->jsonSuccess(['content' => $content], 'Note updated successfully!');
     }

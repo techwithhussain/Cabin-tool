@@ -182,6 +182,52 @@ class NoteRepository
         );
     }
 
+    public function updateNote(
+        string $slug,
+        string $newContent,
+        ?string $password = null,
+        ?string $expiry = null,
+        ?bool $burnAfterRead = null
+    ): void {
+        $encrypted = $this->encryption->encrypt($newContent);
+        
+        $fields = [
+            'content_encrypted = ?',
+            'content_iv = ?',
+            'content_tag = ?',
+            'updated_at = CURRENT_TIMESTAMP',
+        ];
+        $params = [
+            $encrypted['encrypted'],
+            $encrypted['iv'],
+            $encrypted['tag'],
+        ];
+
+        if ($password !== null && $password !== '') {
+            $fields[] = 'password_hash = ?';
+            $params[] = $this->password->hash($password);
+        }
+
+        if ($expiry !== null && $expiry !== '') {
+            $expiryService = new \App\Services\ExpiryService();
+            $fields[] = 'expires_at = ?';
+            $params[] = $expiryService->calculateExpiresAt($expiry);
+        }
+
+        if ($burnAfterRead !== null) {
+            $fields[] = 'burn_after_read = ?';
+            $params[] = $burnAfterRead ? 1 : 0;
+        }
+
+        $setClause = implode(', ', $fields);
+        $params[] = $slug;
+
+        $this->db->execute(
+            "UPDATE notes SET $setClause WHERE slug = ? AND deleted_at IS NULL",
+            $params
+        );
+    }
+
     // ─────────────────────────────────────────────
     // Delete
     // ─────────────────────────────────────────────
