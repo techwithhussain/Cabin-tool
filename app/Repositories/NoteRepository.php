@@ -315,11 +315,10 @@ class NoteRepository
     }
 
     /**
-     * Get total storage used by images (via note_images join)
+     * Get total storage used (images removed, always returns 0)
      */
     public function getTotalStorageBytes(): int
     {
-        $row = $this->db->fetchOne('SELECT COALESCE(SUM(size_bytes), 0) as total FROM note_images');
-        return (int) ($row['total'] ?? 0);
+        return 0;
     }
 }

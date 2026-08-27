@@ -175,8 +175,6 @@ class AdminController
         $note = $this->getNotes()->findBySlug($slug);
 
         if ($note) {
-            $imageRepo = new \App\Repositories\ImageRepository();
-            $imageRepo->deleteBySlug($slug);
             $this->getNotes()->hardDelete($slug);
             $this->audit->log('admin_note_deleted', $slug, $request->ipHash(), $request->userAgent());
         }
