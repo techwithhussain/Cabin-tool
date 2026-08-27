@@ -70,12 +70,12 @@ class AuditService
         $db = $this->getDb();
         if (!$db) return [];
 
+        $limit = max(1, min(500, $limit));
         $where  = $action ? 'WHERE action = ?' : '';
         $params = $action ? [$action] : [];
-        $params[] = $limit;
 
         return $db->fetchAll(
-            "SELECT * FROM audit_logs $where ORDER BY created_at DESC LIMIT ?",
+            "SELECT * FROM audit_logs $where ORDER BY created_at DESC LIMIT {$limit}",
             $params
         );
     }

@@ -307,10 +307,10 @@ class NoteRepository
      */
     public function getRecent(int $limit = 20): array
     {
+        $limit = max(1, min(500, $limit));
         return $this->db->fetchAll(
-            'SELECT id, slug, expires_at, is_expired, burn_after_read, view_count, created_at, deleted_at
-             FROM notes ORDER BY created_at DESC LIMIT ?',
-            [$limit]
+            "SELECT id, slug, expires_at, is_expired, burn_after_read, view_count, created_at, deleted_at
+             FROM notes ORDER BY created_at DESC LIMIT {$limit}"
         );
     }
 
