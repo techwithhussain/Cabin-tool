@@ -127,8 +127,15 @@ class NoteController
                 $reserved = ['create', 'note', 'admin', 'image', 'cron', 'login', 'dashboard', 'api', 'logout', 'setup', 'uploads', 'assets', 'favicon'];
                 if (in_array(strtolower($customSlug), $reserved, true)) {
                     $errors[] = 'This custom URL path is reserved. Please choose another one.';
-                } elseif ($this->getNotes()->findBySlug($customSlug) !== null) {
-                    $errors[] = 'This Custom URL is already taken. Please choose another one.';
+                } else {
+                    $existingNote = $this->getNotes()->findBySlug($customSlug);
+                    // Only block if the note is still active (not expired)
+                    if ($existingNote !== null
+                        && !$existingNote->isExpired
+                        && !$this->expiry->isExpired($existingNote->expiresAt)
+                    ) {
+                        $errors[] = 'This Custom URL is already taken. Please choose another one.';
+                    }
                 }
             }
         }
@@ -140,6 +147,15 @@ class NoteController
 
         // ── Create Note ──────────────────────────────
         try {
+            // If an expired note exists with the same custom slug, soft-delete it first
+            // so the unique DB constraint doesn't block re-use of the slug
+            if (!empty($customSlug)) {
+                $oldNote = $this->getNotes()->findBySlug($customSlug);
+                if ($oldNote !== null && ($oldNote->isExpired || $this->expiry->isExpired($oldNote->expiresAt))) {
+                    $this->getNotes()->softDelete($customSlug);
+                }
+            }
+
             $result = $this->getNotes()->create([
                 'content'         => $content,
                 'expires_at'      => $this->expiry->toDateTime($expiryOption),
