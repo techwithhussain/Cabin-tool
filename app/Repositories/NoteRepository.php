@@ -251,6 +251,22 @@ class NoteRepository
         $this->db->execute('DELETE FROM notes WHERE slug = ?', [$slug]);
     }
 
+    /**
+     * Release a slug by hard-deleting any expired or soft-deleted note using it.
+     * This frees the unique DB constraint so a new note can reuse the slug.
+     * Active (non-expired, non-deleted) notes are NOT removed.
+     */
+    public function releaseSlug(string $slug): void
+    {
+        $this->db->execute(
+            'DELETE FROM notes WHERE slug = ?
+             AND (deleted_at IS NOT NULL
+                  OR is_expired = 1
+                  OR (expires_at IS NOT NULL AND expires_at < NOW()))',
+            [$slug]
+        );
+    }
+
     // ─────────────────────────────────────────────
     // Admin / Cron
     // ─────────────────────────────────────────────

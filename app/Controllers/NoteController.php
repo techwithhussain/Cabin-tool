@@ -147,13 +147,10 @@ class NoteController
 
         // ── Create Note ──────────────────────────────
         try {
-            // If an expired note exists with the same custom slug, soft-delete it first
-            // so the unique DB constraint doesn't block re-use of the slug
+            // Free up expired/deleted notes using this slug so the unique
+            // DB constraint doesn't block re-use of the slug
             if (!empty($customSlug)) {
-                $oldNote = $this->getNotes()->findBySlug($customSlug);
-                if ($oldNote !== null && ($oldNote->isExpired || $this->expiry->isExpired($oldNote->expiresAt))) {
-                    $this->getNotes()->softDelete($customSlug);
-                }
+                $this->getNotes()->releaseSlug($customSlug);
             }
 
             $result = $this->getNotes()->create([
