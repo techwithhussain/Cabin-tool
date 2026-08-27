@@ -1,0 +1,30 @@
+# robots.txt – cabinn.in
+# Generated for Cabin – Secure Notes & Private Sharing
+# https://cabinn.in
+
+User-agent: *
+
+# Allow public pages
+Allow: /$
+Allow: /about
+Allow: /privacy
+Allow: /terms
+Allow: /dmca
+Allow: /disclaimer
+Allow: /create
+Allow: /assets/
+
+# Disallow private/sensitive areas
+Disallow: /admin/
+Disallow: /admin
+Disallow: /note/
+Disallow: /cron/
+Disallow: /api/
+
+# Disallow note password verification endpoints
+Disallow: /note/*/verify
+Disallow: /note/*/delete
+Disallow: /note/*/update
+
+# Sitemap location
+Sitemap: https://cabinn.in/sitemap.xml

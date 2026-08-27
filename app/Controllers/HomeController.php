@@ -9,7 +9,7 @@ use App\Core\Response;
 use App\Repositories\NoteRepository;
 
 /**
- * HomeController – Landing Page
+ * HomeController – Landing Page & About Page
  */
 class HomeController
 {
@@ -21,21 +21,30 @@ class HomeController
             $repo  = new NoteRepository();
             $stats = $repo->getStats();
         } catch (\Throwable $e) {
-            // DB not initialized or connection failed - fallback to empty stats gracefully
+            // DB not initialized or connection failed — graceful fallback
         }
 
         $response->view('landing.index', [
-            'stats'     => $stats,
-            'pageTitle' => 'Cabin – Secure Notes & Private Sharing',
-            'pageDesc'  => 'Create private notes, set auto-destruct timers, and send sensitive information securely. No sign up. No tracking. Just simple, private, and encrypted sharing.',
+            'stats'      => $stats,
+            'pageTitle'  => 'Cabin – Secure Notes & Private Sharing | AES-256 Encrypted',
+            'pageDesc'   => 'Create AES-256 encrypted private notes, set auto-destruct timers, and share them securely. No sign up. No tracking. No logs. Just pure private sharing.',
+            'schemaType' => 'home',
+            'breadcrumbs' => [],  // Homepage has no breadcrumbs
         ], 'main');
     }
 
     public function about(Request $request, Response $response): void
     {
+        $appUrl = rtrim($_ENV['APP_URL'] ?? 'https://cabinn.in', '/');
+
         $response->view('landing.about', [
-            'pageTitle' => 'About the Creator – Hussain Lone | Tech With Hussain',
-            'pageDesc'  => 'Meet Hussain Lone (Tech With Hussain), the developer and creator of Cabin – a fast, secure, AES-256 encrypted private notes platform.',
+            'pageTitle'  => 'About the Creator – Hussain Lone | Tech With Hussain',
+            'pageDesc'   => 'Meet Hussain Lone (Tech With Hussain), the Web Developer, SEO Expert, and creator of Cabin – a fast, AES-256 encrypted private notes platform trusted by users worldwide.',
+            'schemaType' => 'about',
+            'breadcrumbs' => [
+                ['name' => 'Home',  'url' => $appUrl . '/'],
+                ['name' => 'About', 'url' => $appUrl . '/about'],
+            ],
         ], 'main');
     }
 }

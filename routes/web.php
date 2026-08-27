@@ -7,6 +7,7 @@ use App\Controllers\HomeController;
 use App\Controllers\NoteController;
 use App\Controllers\AdminController;
 use App\Controllers\CronController;
+use App\Controllers\LegalController;
 use App\Middleware\CsrfMiddleware;
 use App\Middleware\RateLimitMiddleware;
 use App\Middleware\AdminAuthMiddleware;
@@ -24,6 +25,14 @@ function registerWebRoutes(Router $router): void
     // ─────────────────────────────────────────────
     $router->get('/', [HomeController::class, 'index']);
     $router->get('/about', [HomeController::class, 'about']);
+
+    // ─────────────────────────────────────────────
+    // Legal Pages
+    // ─────────────────────────────────────────────
+    $router->get('/privacy', [LegalController::class, 'privacy']);
+    $router->get('/terms', [LegalController::class, 'terms']);
+    $router->get('/dmca', [LegalController::class, 'dmca']);
+    $router->get('/disclaimer', [LegalController::class, 'disclaimer']);
 
     // ─────────────────────────────────────────────
     // Workspace – Create Note

@@ -12,7 +12,15 @@
             <div class="about-avatar-wrap">
                 <div class="about-avatar-ring">
                     <div class="about-avatar-inner about-avatar-inner--photo">
-                        <img src="/assets/img/hussain.png" alt="Hussain Lone – Tech With Hussain" class="about-avatar-photo">
+                        <img src="/assets/img/hussain.png"
+                             alt="Hussain Lone – Web Developer, SEO Expert & Creator of Cabin (Tech With Hussain)"
+                             title="Hussain Lone – Tech With Hussain"
+                             class="about-avatar-photo"
+                             width="144"
+                             height="144"
+                             loading="eager"
+                             decoding="async"
+                             fetchpriority="high">
                     </div>
                 </div>
                 <div class="about-status-badge">

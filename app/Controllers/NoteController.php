@@ -44,8 +44,9 @@ class NoteController
     public function workspace(Request $request, Response $response): void
     {
         $response->view('workspace.create', [
-            'pageTitle'     => 'Create Secure Note – Cabin',
-            'pageDesc'      => 'Create a private, encrypted note. Set expiry, add password.',
+            'pageTitle'     => 'Create Secure Note – Cabin | AES-256 Encrypted',
+            'pageDesc'      => 'Create a private, AES-256 encrypted note. Set auto-expiry, add a password, and share securely. No sign up required.',
+            'noindex'       => false,  // Allow create page to be indexed (it's a key landing page)
             'csrfToken'     => $this->csrf->getToken(),
             'expiryOptions' => ExpiryService::OPTIONS,
             'maxNoteLen'    => (int) Config::env('MAX_NOTE_LENGTH', 50000),
@@ -124,7 +125,7 @@ class NoteController
             if (!preg_match('/^[a-zA-Z0-9_-]{3,24}$/', $customSlug)) {
                 $errors[] = 'Custom URL must be 3-24 characters long and contain only letters, numbers, hyphens, or underscores.';
             } else {
-                $reserved = ['create', 'about', 'note', 'admin', 'image', 'cron', 'login', 'dashboard', 'api', 'logout', 'setup', 'uploads', 'assets', 'favicon'];
+                $reserved = ['create', 'about', 'privacy', 'terms', 'dmca', 'disclaimer', 'note', 'admin', 'image', 'cron', 'login', 'dashboard', 'api', 'logout', 'setup', 'uploads', 'assets', 'favicon'];
                 if (in_array(strtolower($customSlug), $reserved, true)) {
                     $errors[] = 'This custom URL path is reserved. Please choose another one.';
                 } else {
@@ -204,6 +205,7 @@ class NoteController
         if (!$note || $note->isDeleted()) {
             $response->view('note.expired', [
                 'pageTitle' => 'Note Not Found – Cabin',
+                'noindex'   => true,
                 'reason'    => 'deleted',
             ], 'minimal');
             return;
@@ -216,6 +218,7 @@ class NoteController
             }
             $response->view('note.expired', [
                 'pageTitle' => 'Note Expired – Cabin',
+                'noindex'   => true,
                 'reason'    => 'expired',
             ], 'minimal');
             return;
@@ -227,6 +230,7 @@ class NoteController
             if (!isset($_SESSION[$sessionKey]) || $_SESSION[$sessionKey] !== true) {
                 $response->view('note.password', [
                     'pageTitle' => 'Protected Note – Cabin',
+                    'noindex'   => true,
                     'slug'      => $slug,
                     'csrfToken' => $this->csrf->getToken(),
                 ], 'minimal');
@@ -249,7 +253,8 @@ class NoteController
 
         $response->view('note.view', [
             'pageTitle'        => 'Secure Note – Cabin',
-            'pageDesc'         => 'Private encrypted note shared via Cabin.',
+            'pageDesc'         => 'Private encrypted note shared via Cabin. Self-destructing after expiry.',
+            'noindex'          => true,  // Never index private note content
             'note'             => $note,
             'content'          => $content,
             'csrfToken'        => $this->csrf->getToken(),

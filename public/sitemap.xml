@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+
+    <!-- ═══════════════════════════════════════
+         HOMEPAGE — Highest Priority
+    ═══════════════════════════════════════ -->
+    <url>
+        <loc>https://cabinn.in/</loc>
+        <lastmod>2026-08-28</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+        <image:image>
+            <image:loc>https://cabinn.in/assets/img/og-image.jpg</image:loc>
+            <image:title>Cabin – Secure Notes &amp; Private Sharing</image:title>
+            <image:caption>AES-256 encrypted notes with auto-destruct. No sign up required.</image:caption>
+        </image:image>
+    </url>
+
+    <!-- ═══════════════════════════════════════
+         CREATE NOTE PAGE
+    ═══════════════════════════════════════ -->
+    <url>
+        <loc>https://cabinn.in/create</loc>
+        <lastmod>2026-08-28</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+
+    <!-- ═══════════════════════════════════════
+         ABOUT PAGE
+    ═══════════════════════════════════════ -->
+    <url>
+        <loc>https://cabinn.in/about</loc>
+        <lastmod>2026-08-28</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://cabinn.in/assets/img/hussain.png</image:loc>
+            <image:title>Hussain Lone – Tech With Hussain, Creator of Cabin</image:title>
+            <image:caption>Web Developer, SEO Expert, and Digital Marketing Specialist from Srinagar, J&amp;K, India</image:caption>
+        </image:image>
+    </url>
+
+    <!-- ═══════════════════════════════════════
+         LEGAL PAGES
+    ═══════════════════════════════════════ -->
+    <url>
+        <loc>https://cabinn.in/privacy</loc>
+        <lastmod>2026-08-28</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.3</priority>
+    </url>
+
+    <url>
+        <loc>https://cabinn.in/terms</loc>
+        <lastmod>2026-08-28</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.3</priority>
+    </url>
+
+    <url>
+        <loc>https://cabinn.in/dmca</loc>
+        <lastmod>2026-08-28</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cabinn.in/disclaimer</loc>
+        <lastmod>2026-08-28</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+</urlset>
