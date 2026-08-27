@@ -211,7 +211,7 @@ class NoteRepository
         if ($expiry !== null && $expiry !== '') {
             $expiryService = new \App\Services\ExpiryService();
             $fields[] = 'expires_at = ?';
-            $params[] = $expiryService->calculateExpiresAt($expiry);
+            $params[] = $expiryService->toDateTime($expiry);
         }
 
         if ($burnAfterRead !== null) {
