@@ -34,6 +34,9 @@
     <!-- CSS -->
     <link rel="stylesheet" href="/assets/css/app.css">
     <link rel="stylesheet" href="/assets/css/landing.css">
+    <?php if (rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH), '/') === '/about'): ?>
+    <link rel="stylesheet" href="/assets/css/about.css">
+    <?php endif; ?>
 
     <?php if (isset($csrfToken)): ?>
     <meta name="csrf-token" content="<?= htmlspecialchars($csrfToken) ?>">
