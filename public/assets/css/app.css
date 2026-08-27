@@ -329,6 +329,13 @@ input, textarea, select {
     gap: var(--space-8);
 }
 
+.nav-brand-wrap {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-shrink: 0;
+}
+
 .nav-logo {
     display: flex;
     align-items: center;
@@ -361,15 +368,37 @@ input, textarea, select {
     letter-spacing: -0.02em;
 }
 
-.logo-sub {
-    font-size: 10px;
-    font-weight: var(--font-weight-medium);
-    color: var(--color-text-muted);
-    display: none;
+.logo-sub-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-primary);
+    background: rgba(139, 61, 255, 0.08);
+    border: 1px solid rgba(139, 61, 255, 0.18);
+    padding: 3px 8px;
+    border-radius: var(--radius-full);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: var(--transition-fast);
 }
 
-@media (min-width: 768px) {
-    .logo-sub { display: block; }
+.logo-sub-badge:hover {
+    background: rgba(139, 61, 255, 0.16);
+    border-color: rgba(139, 61, 255, 0.35);
+    transform: translateY(-1px);
+    color: var(--color-primary-dark);
+}
+
+.logo-sub-by {
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-regular);
+}
+
+.logo-sub-name {
+    color: var(--color-primary);
+    font-weight: var(--font-weight-bold);
 }
 
 .nav-links {
@@ -1224,13 +1253,18 @@ input, textarea, select {
         justify-content: space-between;
     }
 
+    .nav-brand-wrap {
+        gap: 6px;
+    }
+
+    .logo-sub-badge {
+        font-size: 10px;
+        padding: 2px 6px;
+    }
+
     .nav-logo {
         gap: var(--space-2);
         min-width: 0;
-    }
-
-    .logo-sub {
-        display: none !important;
     }
 
     .nav-actions {
@@ -1274,6 +1308,18 @@ input, textarea, select {
 
     .logo-text {
         font-size: 1.1rem;
+    }
+
+    .logo-sub-badge {
+        font-size: 9.5px;
+        padding: 2px 5px;
+    }
+
+    .logo-sub-name {
+        max-width: 95px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .nav-actions .btn {

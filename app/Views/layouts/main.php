@@ -33,6 +33,9 @@
     <!-- CSS -->
     <link rel="stylesheet" href="/assets/css/app.css">
     <link rel="stylesheet" href="/assets/css/landing.css">
+    <?php if (isset($pageTitle) && str_contains($pageTitle, 'About')): ?>
+    <link rel="stylesheet" href="/assets/css/about.css">
+    <?php endif; ?>
 
     <?php if (isset($csrfToken)): ?>
     <meta name="csrf-token" content="<?= htmlspecialchars($csrfToken) ?>">
@@ -55,21 +58,27 @@
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
-            <a href="/" class="nav-logo">
-                <div class="logo-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2L3 7V12C3 16.55 6.84 20.74 12 22C17.16 20.74 21 16.55 21 12V7L12 2Z" fill="white" fill-opacity="0.9"/>
-                        <path d="M9 12L11 14L15 10" stroke="rgba(79,95,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </div>
-                <span class="logo-text">Cabin</span>
-                <span class="logo-sub">by <a href="https://techwithhussain.online/" target="_blank" rel="noopener noreferrer" style="color:inherit; text-decoration:none; opacity:0.9;">Tech With Hussain</a></span>
-            </a>
+            <div class="nav-brand-wrap">
+                <a href="/" class="nav-logo">
+                    <div class="logo-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L3 7V12C3 16.55 6.84 20.74 12 22C17.16 20.74 21 16.55 21 12V7L12 2Z" fill="white" fill-opacity="0.9"/>
+                            <path d="M9 12L11 14L15 10" stroke="rgba(79,95,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <span class="logo-text">Cabin</span>
+                </a>
+                <a href="https://techwithhussain.online/" target="_blank" rel="noopener noreferrer" class="logo-sub-badge" title="Created by Tech With Hussain">
+                    <span class="logo-sub-by">by</span>
+                    <span class="logo-sub-name">Tech With Hussain</span>
+                </a>
+            </div>
 
             <ul class="nav-links" id="navLinks">
                 <li><a href="/#features">Features</a></li>
                 <li><a href="/#how-it-works">How It Works</a></li>
                 <li><a href="/#use-cases">Use Cases</a></li>
+                <li><a href="/about">About</a></li>
                 <li><a href="/#faq">FAQ</a></li>
                 <li><a href="/#contact">Contact</a></li>
             </ul>
@@ -125,8 +134,8 @@
                         <li><a href="/#features">Features</a></li>
                         <li><a href="/#how-it-works">How It Works</a></li>
                         <li><a href="/#use-cases">Use Cases</a></li>
+                        <li><a href="/about">About Creator</a></li>
                         <li><a href="/#faq">FAQ</a></li>
-                        <li><a href="/create">Contact</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">

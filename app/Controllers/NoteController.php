@@ -124,7 +124,7 @@ class NoteController
             if (!preg_match('/^[a-zA-Z0-9_-]{3,24}$/', $customSlug)) {
                 $errors[] = 'Custom URL must be 3-24 characters long and contain only letters, numbers, hyphens, or underscores.';
             } else {
-                $reserved = ['create', 'note', 'admin', 'image', 'cron', 'login', 'dashboard', 'api', 'logout', 'setup', 'uploads', 'assets', 'favicon'];
+                $reserved = ['create', 'about', 'note', 'admin', 'image', 'cron', 'login', 'dashboard', 'api', 'logout', 'setup', 'uploads', 'assets', 'favicon'];
                 if (in_array(strtolower($customSlug), $reserved, true)) {
                     $errors[] = 'This custom URL path is reserved. Please choose another one.';
                 } else {

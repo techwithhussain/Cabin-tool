@@ -27,7 +27,15 @@ class HomeController
         $response->view('landing.index', [
             'stats'     => $stats,
             'pageTitle' => 'Cabin – Secure Notes & Private Sharing',
-            'pageDesc'  => 'Create private notes, share images, and send sensitive information securely. No sign up. No tracking. Just simple, private, and encrypted sharing.',
+            'pageDesc'  => 'Create private notes, set auto-destruct timers, and send sensitive information securely. No sign up. No tracking. Just simple, private, and encrypted sharing.',
+        ], 'main');
+    }
+
+    public function about(Request $request, Response $response): void
+    {
+        $response->view('landing.about', [
+            'pageTitle' => 'About the Creator – Hussain Lone | Tech With Hussain',
+            'pageDesc'  => 'Meet Hussain Lone (Tech With Hussain), the developer and creator of Cabin – a fast, secure, AES-256 encrypted private notes platform.',
         ], 'main');
     }
 }

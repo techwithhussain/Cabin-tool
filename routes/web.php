@@ -23,6 +23,7 @@ function registerWebRoutes(Router $router): void
     // Public – Landing
     // ─────────────────────────────────────────────
     $router->get('/', [HomeController::class, 'index']);
+    $router->get('/about', [HomeController::class, 'about']);
 
     // ─────────────────────────────────────────────
     // Workspace – Create Note
