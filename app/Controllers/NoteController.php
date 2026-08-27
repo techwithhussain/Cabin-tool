@@ -252,6 +252,7 @@ class NoteController
             'pageDesc'         => 'Private encrypted note shared via Cabin.',
             'note'             => $note,
             'content'          => $content,
+            'csrfToken'        => $this->csrf->getToken(),
             'remainingSeconds' => $this->expiry->remainingSeconds($note->expiresAt),
             'humanRemaining'   => $this->expiry->humanRemaining($note->expiresAt),
             'burnAfterRead'    => $note->burnAfterRead,
