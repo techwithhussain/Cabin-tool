@@ -24,10 +24,6 @@
             autofocus
         ></textarea>
 
-        <!-- Image Preview Strip -->
-        <div class="image-strip" id="imageStrip" aria-live="polite" style="display:none;">
-            <div class="image-strip__inner" id="imageStripInner"></div>
-        </div>
     </div>
 
     <!-- ── Settings Panel ─────────────────────── -->
@@ -97,26 +93,6 @@
                         <svg id="eyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                     </button>
                 </div>
-            </div>
-
-            <!-- Image Upload -->
-            <div class="settings-field" id="uploadField">
-                <label class="settings-label">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-                    Upload Image <span class="settings-label--optional">(Optional)</span>
-                </label>
-                <div class="dropzone" id="dropzone" role="button" tabindex="0" aria-label="Upload image">
-                    <input type="file" id="imageInput" accept="image/jpeg,image/png,image/gif,image/webp" multiple style="display:none;">
-                    <div class="dropzone__content">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                        <p>Click or drag &amp; drop</p>
-                        <span>JPG, PNG, GIF, WebP up to <?= $maxUploadMB ?>MB<br>Max <?= $maxImages ?> images</span>
-                    </div>
-                </div>
-                <div class="upload-progress" id="uploadProgress" style="display:none;">
-                    <div class="upload-progress__bar" id="uploadProgressBar"></div>
-                </div>
-                <div class="upload-list" id="uploadList"></div>
             </div>
 
             <!-- Burn After Read -->
@@ -190,4 +166,3 @@
 </div>
 
 <input type="hidden" id="csrfToken" value="<?= htmlspecialchars($csrfToken) ?>">
-<input type="hidden" id="uploadSession" value="<?= htmlspecialchars(bin2hex(random_bytes(16))) ?>">

@@ -8,7 +8,6 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Core\Config;
 use App\Repositories\NoteRepository;
-use App\Repositories\ImageRepository;
 use App\Services\ExpiryService;
 use App\Services\PasswordService;
 use App\Services\CsrfService;
@@ -20,7 +19,6 @@ use App\Services\AuditService;
 class NoteController
 {
     private ?NoteRepository  $notes = null;
-    private ?ImageRepository $images = null;
     private ExpiryService   $expiry;
     private PasswordService $password;
     private CsrfService     $csrf;
@@ -39,11 +37,6 @@ class NoteController
         return $this->notes ??= new NoteRepository();
     }
 
-    private function getImages(): ImageRepository
-    {
-        return $this->images ??= new ImageRepository();
-    }
-
     // ─────────────────────────────────────────────
     // Workspace (Create Note Form)
     // ─────────────────────────────────────────────
@@ -52,12 +45,10 @@ class NoteController
     {
         $response->view('workspace.create', [
             'pageTitle'     => 'Create Secure Note – Cabin',
-            'pageDesc'      => 'Create a private, encrypted note. Set expiry, add password, upload images.',
+            'pageDesc'      => 'Create a private, encrypted note. Set expiry, add password.',
             'csrfToken'     => $this->csrf->getToken(),
             'expiryOptions' => ExpiryService::OPTIONS,
-            'maxImages'     => (int) Config::env('MAX_IMAGES_PER_NOTE', 5),
             'maxNoteLen'    => (int) Config::env('MAX_NOTE_LENGTH', 50000),
-            'maxUploadMB'   => round(Config::env('MAX_UPLOAD_SIZE', 10485760) / 1048576, 0),
             'customSlug'    => '',
         ], 'minimal');
     }
@@ -88,12 +79,10 @@ class NoteController
         // If note does not exist -> Open workspace editor pre-filled with this slug!
         $response->view('workspace.create', [
             'pageTitle'     => "Create Note – cabinn.in/$slug",
-            'pageDesc'      => 'Create a private, encrypted note. Set expiry, add password, upload images.',
+            'pageDesc'      => 'Create a private, encrypted note. Set expiry, add password.',
             'csrfToken'     => $this->csrf->getToken(),
             'expiryOptions' => ExpiryService::OPTIONS,
-            'maxImages'     => (int) Config::env('MAX_IMAGES_PER_NOTE', 5),
             'maxNoteLen'    => (int) Config::env('MAX_NOTE_LENGTH', 50000),
-            'maxUploadMB'   => round(Config::env('MAX_UPLOAD_SIZE', 10485760) / 1048576, 0),
             'customSlug'    => $slug,
         ], 'minimal');
     }
@@ -163,14 +152,6 @@ class NoteController
             $note       = $result['note'];
             $ownerToken = $result['owner_token'];
             $slug       = $result['slug'];
-
-            // Handle pending image uploads (images uploaded before note creation)
-            $pendingImages = $_SESSION['pending_images'][$request->body('upload_session', '')] ?? [];
-            foreach ($pendingImages as $imageData) {
-                // Move from temp slug to real note slug
-                $this->getImages()->save($note->id, $slug, $imageData);
-            }
-            unset($_SESSION['pending_images'][$request->body('upload_session', '')]);
 
             // Grant creator session access for subsequent editing/auto-saves
             if (!empty($password)) {
@@ -246,12 +227,10 @@ class NoteController
 
         // Decrypt content
         $content = $this->getNotes()->decryptContent($note);
-        $images  = $this->getImages()->getBySlug($slug);
 
         // Handle burn-after-read
         if ($note->burnAfterRead) {
             $this->getNotes()->softDelete($slug);
-            $this->getImages()->deleteBySlug($slug);
             $this->audit->log('note_burned', $slug, $request->ipHash(), $request->userAgent());
         }
 
@@ -260,7 +239,6 @@ class NoteController
             'pageDesc'         => 'Private encrypted note shared via Cabin.',
             'note'             => $note,
             'content'          => $content,
-            'images'           => $images,
             'remainingSeconds' => $this->expiry->remainingSeconds($note->expiresAt),
             'humanRemaining'   => $this->expiry->humanRemaining($note->expiresAt),
             'burnAfterRead'    => $note->burnAfterRead,
@@ -394,7 +372,6 @@ class NoteController
         }
 
         $this->getNotes()->softDelete($slug);
-        $this->getImages()->deleteBySlug($slug);
         $this->audit->log('note_deleted', $slug, $request->ipHash(), $request->userAgent());
 
         $response->jsonSuccess(null, 'Note deleted successfully.');

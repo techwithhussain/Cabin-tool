@@ -5,7 +5,6 @@ declare(strict_types=1);
 use App\Core\Router;
 use App\Controllers\HomeController;
 use App\Controllers\NoteController;
-use App\Controllers\ImageController;
 use App\Controllers\AdminController;
 use App\Controllers\CronController;
 use App\Middleware\CsrfMiddleware;
@@ -54,18 +53,6 @@ function registerWebRoutes(Router $router): void
     $router->post('/note/{slug}/delete', [NoteController::class, 'delete'], [
         CsrfMiddleware::class,
     ]);
-
-    // ─────────────────────────────────────────────
-    // Image Handling
-    // ─────────────────────────────────────────────
-
-    // Image upload (AJAX, requires CSRF)
-    $router->post('/image/upload', [ImageController::class, 'upload'], [
-        CsrfMiddleware::class,
-    ]);
-
-    // Serve image securely through PHP proxy
-    $router->get('/image/{slug}/{filename}', [ImageController::class, 'serve']);
 
     // ─────────────────────────────────────────────
     // Cron – Cleanup (key-protected, no CSRF needed)

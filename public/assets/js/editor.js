@@ -30,180 +30,6 @@ try {
     localStorage.removeItem('cabin_draft_v1');
 } catch (e) {}
 
-// ─────────────────────────────────────────────
-// Image Upload & Dropzone
-// ─────────────────────────────────────────────
-(function initImageUpload() {
-    const dropzone     = document.getElementById('dropzone');
-    const imageInput   = document.getElementById('imageInput');
-    const uploadList   = document.getElementById('uploadList');
-    const imageStrip   = document.getElementById('imageStrip');
-    const stripInner   = document.getElementById('imageStripInner');
-    const progressWrap = document.getElementById('uploadProgress');
-    const progressBar  = document.getElementById('uploadProgressBar');
-    const uploadSession = document.getElementById('uploadSession')?.value || '';
-
-    if (!dropzone || !imageInput) return;
-
-    let uploadedFiles = []; // [{filename, original_name, url}]
-
-    // Click to open file picker
-    dropzone.addEventListener('click', () => imageInput.click());
-    dropzone.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') imageInput.click();
-    });
-
-    // Drag and drop
-    dropzone.addEventListener('dragover', e => {
-        e.preventDefault();
-        dropzone.classList.add('drag-over');
-    });
-
-    ['dragleave', 'dragend', 'drop'].forEach(event => {
-        dropzone.addEventListener(event, () => dropzone.classList.remove('drag-over'));
-    });
-
-    dropzone.addEventListener('drop', e => {
-        e.preventDefault();
-        const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
-        handleFiles(files);
-    });
-
-    imageInput.addEventListener('change', () => {
-        handleFiles(Array.from(imageInput.files));
-        imageInput.value = '';
-    });
-
-    async function handleFiles(files) {
-        const MAX_IMAGES = parseInt(dropzone.closest('[data-max]')?.dataset.max || '5');
-
-        for (const file of files) {
-            if (uploadedFiles.length >= MAX_IMAGES) {
-                Cabin.toast(`Maximum ${MAX_IMAGES} images allowed.`, 'error');
-                break;
-            }
-
-            await uploadFile(file);
-        }
-    }
-
-    async function uploadFile(file) {
-        const itemEl = addUploadItem(file);
-        const previewUrl = URL.createObjectURL(file);
-        if (progressWrap) progressWrap.style.display = 'block';
-        if (progressBar)  progressBar.style.width    = '0%';
-
-        try {
-            const formData = new FormData();
-            formData.append('image', file);
-            formData.append('upload_session', uploadSession);
-            formData.append('_csrf_token', Cabin.csrfToken());
-
-            // Simulate progress with XHR for better UX
-            const result = await uploadWithProgress(formData, (pct) => {
-                if (progressBar) progressBar.style.width = `${pct}%`;
-            });
-
-            if (result.success) {
-                const data = result.data;
-                data.previewUrl = data.url || previewUrl;
-                uploadedFiles.push(data);
-                updateUploadItem(itemEl, 'ok', data.size || '–');
-                addToImageStrip(data, uploadedFiles.length - 1);
-            } else {
-                updateUploadItem(itemEl, 'error', result.message || 'Upload failed');
-                Cabin.toast(result.message || 'Upload failed', 'error');
-            }
-        } catch (err) {
-            updateUploadItem(itemEl, 'error', 'Upload failed');
-            Cabin.toast('Image upload failed. Please try again.', 'error');
-        } finally {
-            if (progressWrap) progressWrap.style.display = 'none';
-        }
-    }
-
-    function uploadWithProgress(formData, onProgress) {
-        return new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-
-            xhr.upload.addEventListener('progress', e => {
-                if (e.lengthComputable) {
-                    onProgress(Math.round(e.loaded / e.total * 100));
-                }
-            });
-
-            xhr.addEventListener('load', () => {
-                try {
-                    resolve(JSON.parse(xhr.responseText));
-                } catch {
-                    reject(new Error('Invalid response'));
-                }
-            });
-
-            xhr.addEventListener('error', reject);
-
-            xhr.open('POST', '/image/upload');
-            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-            xhr.setRequestHeader('X-CSRF-Token', Cabin.csrfToken());
-            xhr.send(formData);
-        });
-    }
-
-    function addUploadItem(file) {
-        const item = document.createElement('div');
-        item.className = 'upload-item';
-        item.innerHTML = `
-            <img class="upload-item__thumb" src="${URL.createObjectURL(file)}" alt="">
-            <div class="upload-item__info">
-                <div class="upload-item__name">${escHtml(file.name)}</div>
-                <div class="upload-item__size">${formatBytes(file.size)}</div>
-            </div>
-            <span class="upload-item__status upload-item__status--info">Uploading…</span>
-        `;
-        if (uploadList) uploadList.appendChild(item);
-        return item;
-    }
-
-    function updateUploadItem(item, status, label) {
-        const statusEl = item.querySelector('.upload-item__status');
-        if (statusEl) {
-            statusEl.className = `upload-item__status upload-item__status--${status}`;
-            statusEl.textContent = status === 'ok' ? `✓ ${label}` : `✗ ${label}`;
-        }
-    }
-
-    function addToImageStrip(data, index) {
-        if (!imageStrip || !stripInner) return;
-        imageStrip.style.display = 'block';
-
-        const thumb = document.createElement('div');
-        thumb.className = 'image-strip-thumb';
-        const imgSrc = data.previewUrl || data.url || '';
-        thumb.innerHTML = `
-            <img src="${escHtml(imgSrc)}" alt="${escHtml(data.original_name || '')}">
-            <button class="image-strip-thumb__remove" data-index="${index}" aria-label="Remove image">✕</button>
-        `;
-
-        thumb.querySelector('.image-strip-thumb__remove').addEventListener('click', () => {
-            uploadedFiles.splice(index, 1);
-            thumb.remove();
-            if (stripInner.children.length === 0) imageStrip.style.display = 'none';
-        });
-
-        stripInner.appendChild(thumb);
-    }
-
-    // Expose for use in note creation
-    window.CabinUploader = {
-        getFiles: () => uploadedFiles,
-        clear: () => {
-            uploadedFiles = [];
-            if (uploadList)  uploadList.innerHTML = '';
-            if (stripInner)  stripInner.innerHTML = '';
-            if (imageStrip)  imageStrip.style.display = 'none';
-        },
-    };
-})();
 
 // ─────────────────────────────────────────────
 // Create Note & Live Real-Time Auto-Save (like Crumple.me)
@@ -273,7 +99,6 @@ try {
         const expiry       = document.getElementById('expirySelect')?.value || '24h';
         const password     = document.getElementById('notePassword')?.value || '';
         const burnAfterRead = document.getElementById('burnAfterRead')?.checked || false;
-        const uploadSession = document.getElementById('uploadSession')?.value || '';
 
         try {
             if (!isNoteCreated) {
@@ -285,7 +110,6 @@ try {
                 if (currentSlug)   formData.append('custom_slug', currentSlug);
                 if (password)      formData.append('password', password);
                 if (burnAfterRead) formData.append('burn_after_read', '1');
-                if (uploadSession) formData.append('upload_session', uploadSession);
 
                 const result = await Cabin.fetch('/note', {
                     method: 'POST',
@@ -456,7 +280,6 @@ try {
             lastSavedContent = '';
             createdNoteData = null;
             window.history.replaceState(null, '', '/create');
-            window.CabinUploader?.clear();
             noteTextarea.focus();
             noteTextarea.dispatchEvent(new Event('input'));
         });
@@ -697,50 +520,6 @@ try {
         });
     }
 
-    // Image download buttons
-    document.querySelectorAll('.gallery-download-btn').forEach(btn => {
-        btn.addEventListener('click', async e => {
-            e.stopPropagation();
-            const src  = btn.dataset.src;
-            const name = btn.dataset.name || 'image';
-            const a    = document.createElement('a');
-            a.href     = src;
-            a.download = name;
-            a.click();
-        });
-    });
-
-    // Lightbox
-    const lightbox    = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightboxImg');
-    const lightboxClose = document.getElementById('lightboxClose');
-
-    if (lightbox && lightboxImg) {
-        document.querySelectorAll('.gallery-item[data-lightbox]').forEach(item => {
-            item.addEventListener('click', () => {
-                const img = item.querySelector('img');
-                if (!img) return;
-                lightboxImg.src = img.src;
-                lightboxImg.alt = img.alt;
-                lightbox.style.display = 'flex';
-                document.body.style.overflow = 'hidden';
-            });
-        });
-
-        const closeLightbox = () => {
-            lightbox.style.display = 'none';
-            document.body.style.overflow = '';
-        };
-
-        lightboxClose?.addEventListener('click', closeLightbox);
-        lightbox.addEventListener('click', e => {
-            if (e.target === lightbox) closeLightbox();
-        });
-
-        document.addEventListener('keydown', e => {
-            if (e.key === 'Escape') closeLightbox();
-        });
-    }
 })();
 
 // ─────────────────────────────────────────────

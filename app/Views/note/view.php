@@ -42,35 +42,6 @@
             <?= nl2br(htmlspecialchars($content)) ?>
         </div>
 
-        <!-- Images Gallery -->
-        <?php if (!empty($images)): ?>
-        <div class="note-images" id="noteImages">
-            <div class="note-images__header">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-                <?= count($images) ?> Image<?= count($images) !== 1 ? 's' : '' ?>
-            </div>
-            <div class="images-gallery" id="imagesGallery">
-                <?php foreach ($images as $image): ?>
-                <div class="gallery-item" data-lightbox>
-                    <img
-                        src="/image/<?= htmlspecialchars($slug) ?>/<?= htmlspecialchars($image->filename) ?>"
-                        alt="<?= htmlspecialchars($image->originalName) ?>"
-                        loading="lazy"
-                        width="<?= $image->width ?>"
-                        height="<?= $image->height ?>"
-                    >
-                    <div class="gallery-item__overlay">
-                        <button class="gallery-download-btn" data-src="/image/<?= htmlspecialchars($slug) ?>/<?= htmlspecialchars($image->filename) ?>" data-name="<?= htmlspecialchars($image->originalName) ?>" aria-label="Download image">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        </button>
-                        <span class="gallery-item__size"><?= $image->humanSize() ?></span>
-                    </div>
-                </div>
-                <?php endforeach; ?>
-            </div>
-        </div>
-        <?php endif; ?>
-
         <!-- Inline Editor Form (Hidden by default) -->
         <div class="note-edit-box" id="noteEditBox" style="display:none; margin: 15px 0;">
             <textarea id="noteEditTextarea" class="note-textarea" style="width: 100%; min-height: 180px; font-family: inherit; font-size: 1rem; padding: 15px; border-radius: 10px; border: 1px solid rgba(79, 95, 255, 0.3); background: #fff; box-sizing: border-box; resize: vertical;"></textarea>
@@ -110,14 +81,6 @@
         </a>
         <span class="note-footer-brand">Powered by <a href="/">Cabin</a> by <a href="https://techwithhussain.online/" target="_blank" rel="noopener noreferrer" style="color:inherit; font-weight:600; text-decoration:none;">Tech With Hussain</a></span>
     </div>
-</div>
-
-<!-- Lightbox Modal -->
-<div class="lightbox" id="lightbox" style="display:none;" role="dialog" aria-modal="true" aria-label="Image viewer">
-    <button class="lightbox__close" id="lightboxClose" aria-label="Close">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
-    <img src="" alt="" id="lightboxImg" class="lightbox__img">
 </div>
 
 <?php if ($remainingSeconds > 0): ?>
