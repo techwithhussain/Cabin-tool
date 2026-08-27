@@ -11,11 +11,8 @@
         <div class="about-hero-inner" data-animate="fade-up">
             <div class="about-avatar-wrap">
                 <div class="about-avatar-ring">
-                    <div class="about-avatar-inner">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
-                            <circle cx="12" cy="7" r="4"/>
-                        </svg>
+                    <div class="about-avatar-inner about-avatar-inner--photo">
+                        <img src="/assets/img/hussain.png" alt="Hussain Lone – Tech With Hussain" class="about-avatar-photo">
                     </div>
                 </div>
                 <div class="about-status-badge">
