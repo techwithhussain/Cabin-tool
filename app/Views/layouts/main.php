@@ -7,6 +7,7 @@
     <meta name="description" content="<?= htmlspecialchars($pageDesc ?? 'Create private notes and share them securely. No sign up required.') ?>">
     <meta name="robots" content="index, follow">
     <meta name="author" content="Tech With Hussain">
+    <meta name="google-site-verification" content="n0A2A14Y3i2VsR4DUTEY4OfDTPMaXXlWvYwPsPuTvlo">
     <link rel="canonical" href="<?= htmlspecialchars(rtrim($_ENV['APP_URL'] ?? '', '/') . $_SERVER['REQUEST_URI']) ?>">
 
     <!-- Open Graph -->
@@ -33,9 +34,6 @@
     <!-- CSS -->
     <link rel="stylesheet" href="/assets/css/app.css">
     <link rel="stylesheet" href="/assets/css/landing.css">
-    <?php if (isset($pageTitle) && str_contains($pageTitle, 'About')): ?>
-    <link rel="stylesheet" href="/assets/css/about.css">
-    <?php endif; ?>
 
     <?php if (isset($csrfToken)): ?>
     <meta name="csrf-token" content="<?= htmlspecialchars($csrfToken) ?>">
