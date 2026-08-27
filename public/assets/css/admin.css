@@ -295,6 +295,7 @@
 @media (max-width: 1024px) {
     .admin-stats-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-4);
     }
     .admin-layout {
         grid-template-columns: 200px 1fr;
@@ -308,8 +309,53 @@
     .admin-sidebar {
         position: static;
         height: auto;
+        padding: var(--space-4);
+    }
+    .admin-sidebar__brand {
+        padding-bottom: var(--space-3);
+        margin-bottom: var(--space-3);
+    }
+    .admin-nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+    }
+    .admin-nav__link {
+        padding: var(--space-2) var(--space-3);
+        font-size: 13px;
+        min-height: 40px;
+    }
+    .admin-sidebar__footer {
+        padding-top: var(--space-3);
+        margin-top: var(--space-2);
+    }
+    .admin-main {
+        padding: var(--space-4);
+    }
+    .admin-topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-3);
     }
     .admin-stats-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-3);
+    }
+    .admin-table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 0 calc(-1 * var(--space-2));
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-stats-grid {
+        grid-template-columns: 1fr;
+    }
+    .admin-stat-card {
+        padding: var(--space-4);
+    }
+    .admin-stat-card__number {
+        font-size: 1.5rem;
     }
 }

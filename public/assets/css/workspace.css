@@ -422,6 +422,7 @@
     .workspace-layout {
         grid-template-columns: 1fr;
         padding: var(--space-4);
+        gap: var(--space-5);
     }
 
     .workspace-settings {
@@ -430,6 +431,58 @@
     }
 
     .note-textarea {
-        min-height: 250px;
+        min-height: 280px;
+        padding: var(--space-4);
+        font-size: 16px;
+    }
+
+    .workspace-editor__header {
+        padding: var(--space-3) var(--space-4);
+        flex-wrap: wrap;
+        gap: var(--space-2);
+    }
+
+    .settings-card {
+        padding: var(--space-5);
+    }
+}
+
+@media (max-width: 480px) {
+    .workspace-layout {
+        padding: var(--space-3) var(--space-2) var(--space-6);
+        gap: var(--space-4);
+    }
+
+    .workspace-editor {
+        border-radius: var(--radius-lg);
+    }
+
+    .workspace-title {
+        font-size: 14px;
+    }
+
+    .note-textarea {
+        min-height: 220px;
+        padding: var(--space-3);
+    }
+
+    .settings-card {
+        border-radius: var(--radius-lg);
+        padding: var(--space-4) var(--space-3);
+    }
+
+    .settings-input,
+    .settings-select {
+        font-size: 16px;
+        min-height: 44px;
+    }
+
+    .settings-label {
+        font-size: 11px;
+    }
+
+    .btn-lg {
+        min-height: 48px;
+        font-size: 15px;
     }
 }

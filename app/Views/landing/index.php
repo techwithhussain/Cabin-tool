@@ -23,7 +23,7 @@
                 </h1>
 
                 <p class="hero-description">
-                    Create notes, share images, and send sensitive information securely. No sign up. No tracking. Just simple, private, and encrypted sharing.
+                    Create notes, set auto-destruct timers, and send sensitive information securely. No sign up. No tracking. Just simple, private, and encrypted sharing.
                 </p>
 
                 <div class="hero-actions">
@@ -231,11 +231,11 @@
             </div>
             <div class="feature-badge" data-animate="fade-up" data-delay="240">
                 <div class="feature-badge__icon feature-badge__icon--green">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
                 </div>
                 <div>
-                    <h3>Share Images</h3>
-                    <p>Upload images and share them securely with your notes.</p>
+                    <h3>Custom URLs</h3>
+                    <p>Create private, custom links for your notes easily.</p>
                 </div>
             </div>
             <div class="feature-badge" data-animate="fade-up" data-delay="320">
@@ -277,7 +277,7 @@
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                 </div>
                 <h3>Create Your Note</h3>
-                <p>Write your notes, add images, and customise your settings.</p>
+                <p>Write your note, set custom URL, and customise your settings.</p>
             </div>
 
             <div class="step-connector" data-animate="fade-in" data-delay="150">
@@ -348,10 +348,10 @@
 
             <div class="feature-card" data-animate="fade-up" data-delay="240">
                 <div class="feature-card__icon feature-card__icon--green">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
                 </div>
-                <h3>Image Upload</h3>
-                <p>Upload and share images simply and securely along with your notes.</p>
+                <h3>Custom Short URLs</h3>
+                <p>Create memorable custom links like cabinn.in/my-secret-note with complete privacy.</p>
             </div>
 
             <div class="feature-card" data-animate="fade-up" data-delay="320">
@@ -448,11 +448,11 @@
             $faqs = [
                 ['q' => 'Is Cabin really free?', 'a' => 'Yes! Cabin is completely free to use. No account, no subscription, no hidden fees. Just create your note and share it.'],
                 ['q' => 'How is my note encrypted?', 'a' => 'All note content is encrypted using AES-256-GCM encryption before being stored in our database. The encryption key is never stored alongside your data.'],
-                ['q' => 'What happens when a note expires?', 'a' => 'When a note expires, it is permanently and irreversibly deleted from our servers — including any attached images. There is no way to recover it.'],
+                ['q' => 'What happens when a note expires?', 'a' => 'When a note expires, it is permanently and irreversibly deleted from our servers — including all encrypted content. There is no way to recover it.'],
                 ['q' => 'Can I set a password for my note?', 'a' => 'Yes! You can optionally set a password using Argon2id hashing. Anyone who opens the link will need to enter the correct password to view the content.'],
                 ['q' => 'What is "Burn After Read"?', 'a' => 'When Burn After Read is enabled, the note is permanently deleted the moment it is first viewed. It can never be accessed again.'],
                 ['q' => 'Do you track who views my note?', 'a' => 'We only store an anonymised view count and hashed IP addresses. We do not store full IP addresses, personal information, or link views to specific users.'],
-                ['q' => 'What image formats are supported?', 'a' => 'We support JPG, PNG, GIF, and WebP images up to 10MB each, with a maximum of 5 images per note.'],
+                ['q' => 'Can I choose my own custom URL?', 'a' => 'Yes! You can choose custom URLs like cabinn.in/my-custom-note when creating your note, with full privacy protection.'],
             ];
             foreach ($faqs as $i => $faq): ?>
             <div class="faq-item" id="faq-<?= $i ?>">

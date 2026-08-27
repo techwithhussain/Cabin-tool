@@ -616,15 +616,50 @@
     }
 
     .note-view-container {
-        padding: var(--space-4);
+        padding: var(--space-4) var(--space-3);
+    }
+
+    .note-card__header {
+        padding: var(--space-3) var(--space-4);
+        flex-wrap: wrap;
+        gap: var(--space-2);
     }
 
     .note-content {
-        padding: var(--space-6) var(--space-5);
+        padding: var(--space-5) var(--space-4);
         font-size: var(--font-size-base);
     }
 
-    .images-gallery {
-        grid-template-columns: repeat(2, 1fr);
+    .note-actions {
+        padding: var(--space-3) var(--space-4);
+        gap: var(--space-2);
+    }
+
+    .action-btn {
+        flex: 1 1 calc(50% - var(--space-2));
+        min-height: 44px;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .note-view-container {
+        padding: var(--space-3) var(--space-2);
+    }
+
+    .note-content {
+        padding: var(--space-4) var(--space-3);
+    }
+
+    .action-btn {
+        flex: 1 1 100%;
+        font-size: 13.5px;
+    }
+
+    .burn-banner,
+    .expiry-banner {
+        padding: var(--space-2) var(--space-3);
+        font-size: 13px;
+        flex-wrap: wrap;
     }
 }

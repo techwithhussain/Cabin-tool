@@ -153,10 +153,19 @@ const Cabin = {
         toggle.setAttribute('aria-expanded', isOpen);
     });
 
+    // Close on link click
+    navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            navLinks.classList.remove('open');
+            toggle.setAttribute('aria-expanded', 'false');
+        });
+    });
+
     // Close on outside click
     document.addEventListener('click', (e) => {
         if (!navLinks.contains(e.target) && !toggle.contains(e.target)) {
             navLinks.classList.remove('open');
+            toggle.setAttribute('aria-expanded', 'false');
         }
     });
 })();

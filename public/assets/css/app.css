@@ -1124,27 +1124,45 @@ input, textarea, select {
 }
 
 /* ─────────────────────────────────────────────
-   16. Responsive
+   16. Responsive & Mobile Optimization
 ────────────────────────────────────────── */
+@media (max-width: 1200px) {
+    .container {
+        padding: 0 var(--space-5);
+    }
+}
+
 @media (max-width: 1024px) {
+    :root {
+        --nav-height: 68px;
+    }
+
+    .nav-container {
+        gap: var(--space-4);
+    }
+
     .footer-container {
         grid-template-columns: 1fr;
         gap: var(--space-10);
     }
+
     .footer-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-6);
     }
 }
 
-@media (max-width: 768px) {
-    :root {
-        --font-size-5xl: 3rem;
-        --font-size-4xl: 2.25rem;
-        --font-size-3xl: 1.875rem;
-    }
-
+@media (max-width: 900px) {
     .nav-links { display: none; }
-    .nav-mobile-toggle { display: flex; }
+    .nav-mobile-toggle { 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 44px;
+        min-height: 44px;
+        background: transparent;
+        cursor: pointer;
+    }
 
     .nav-links.open {
         display: flex;
@@ -1153,21 +1171,155 @@ input, textarea, select {
         top: var(--nav-height);
         left: 0;
         right: 0;
-        background: white;
-        padding: var(--space-4);
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        padding: var(--space-5) var(--space-6);
         border-bottom: 1px solid var(--color-border);
-        box-shadow: var(--shadow-lg);
+        box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08);
+        z-index: 1001;
+        gap: var(--space-2);
+        max-height: calc(100vh - var(--nav-height));
+        overflow-y: auto;
+        animation: mobileNavSlide 0.25s ease-out;
+    }
+
+    .nav-links.open a {
+        padding: var(--space-3) var(--space-4);
+        font-size: var(--font-size-base);
+        font-weight: var(--font-weight-semibold);
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+
+    .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@keyframes mobileNavSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        --font-size-5xl: clamp(2.25rem, 6vw, 3rem);
+        --font-size-4xl: clamp(1.85rem, 5vw, 2.25rem);
+        --font-size-3xl: clamp(1.5rem, 4vw, 1.875rem);
+        --font-size-2xl: clamp(1.25rem, 3.5vw, 1.5rem);
+        --nav-height: 64px;
+    }
+
+    .nav-container {
+        padding: 0 var(--space-4);
+        gap: var(--space-2);
+        justify-content: space-between;
+    }
+
+    .nav-logo {
+        gap: var(--space-2);
+        min-width: 0;
+    }
+
+    .logo-sub {
+        display: none !important;
+    }
+
+    .nav-actions {
+        gap: var(--space-2);
+        flex-shrink: 0;
     }
 
     .footer-grid {
         grid-template-columns: 1fr;
+        gap: var(--space-8);
     }
 
     .state-card {
-        padding: var(--space-8) var(--space-6);
+        padding: var(--space-8) var(--space-5);
     }
 
     .auth-card {
-        padding: var(--space-8) var(--space-6);
+        padding: var(--space-8) var(--space-5);
+        margin: 0 var(--space-3);
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --nav-height: 60px;
+    }
+
+    .nav-container {
+        padding: 0 var(--space-3);
+    }
+
+    .logo-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .logo-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .logo-text {
+        font-size: 1.1rem;
+    }
+
+    .nav-actions .btn {
+        padding: 8px 12px;
+        font-size: 13px;
+        min-height: 38px;
+        gap: 4px;
+    }
+
+    .nav-actions .btn svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .nav-mobile-toggle {
+        padding: 6px;
+        min-width: 38px;
+        min-height: 38px;
+    }
+
+    .footer-bottom {
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .footer-social {
+        justify-content: flex-start;
+        gap: var(--space-3);
+    }
+}
+
+@media (max-width: 360px) {
+    .nav-container {
+        padding: 0 8px;
+    }
+
+    .logo-text {
+        font-size: 1rem;
+    }
+
+    .nav-actions .btn {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+
+    .container {
+        padding: 0 var(--space-3);
     }
 }
