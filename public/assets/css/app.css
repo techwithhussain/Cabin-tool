@@ -213,6 +213,18 @@ input, textarea, select {
     font-size: var(--font-size-sm);
 }
 
+.btn > span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+}
+
+.btn svg {
+    flex-shrink: 0;
+    vertical-align: middle;
+}
+
 .btn::after {
     content: '';
     position: absolute;
