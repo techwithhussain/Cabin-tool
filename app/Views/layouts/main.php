@@ -257,6 +257,7 @@ $_currentPath = $_reqPath;
             </div>
 
             <ul class="nav-links" id="navLinks" role="menubar" aria-label="Site navigation">
+                <li role="none"><a href="/"             role="menuitem">Home</a></li>
                 <li role="none"><a href="/#features"    role="menuitem">Features</a></li>
                 <li role="none"><a href="/#how-it-works" role="menuitem">How It Works</a></li>
                 <li role="none"><a href="/#use-cases"   role="menuitem">Use Cases</a></li>
