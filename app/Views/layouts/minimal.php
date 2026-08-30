@@ -59,6 +59,7 @@
     </main>
 
     <script src="/assets/js/app.js" defer></script>
+    <script src="/assets/js/qrcode.min.js"></script>
     <script src="/assets/js/editor.js" defer></script>
     <script src="/assets/js/admin.js" defer></script>
 </body>

@@ -71,6 +71,24 @@
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
                 Copy Link
             </button>
+            <button class="action-btn action-btn--qr" id="showQrBtn" type="button" data-url="<?= htmlspecialchars($appUrl . '/' . $slug) ?>" style="color: #7c3aed;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                QR Code
+            </button>
+        </div>
+    </div>
+
+    <!-- QR Code Popup Modal -->
+    <div class="modal-overlay" id="qrViewModal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="qrModalTitle">
+        <div class="modal" style="max-width: 360px; text-align: center; padding: 28px;">
+            <h3 id="qrModalTitle" style="font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #0f172a;">Scan Note on Mobile 📱</h3>
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">Scan this QR code with any camera or scanner app to view this note.</p>
+            
+            <div id="viewPageQrCode" style="display: inline-flex; padding: 12px; background: white; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.06); margin-bottom: 20px;"></div>
+            
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button type="button" class="btn btn-outline btn-sm" id="closeQrModalBtn">Close</button>
+            </div>
         </div>
     </div>
 

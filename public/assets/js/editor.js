@@ -188,6 +188,30 @@ try {
         if (noteUrlInput)  noteUrlInput.value = url;
         if (viewNoteLink)  viewNoteLink.href  = url;
 
+        // Generate Instant QR Code
+        const modalQrEl = document.getElementById('modalQrCode');
+        const modalQrWrap = document.getElementById('modalQrContainer');
+        const toggleQrBtn = document.getElementById('toggleQrBtn');
+
+        if (modalQrEl && window.QRCode) {
+            modalQrEl.innerHTML = '';
+            new QRCode(modalQrEl, {
+                text: url,
+                width: 150,
+                height: 150,
+                colorDark: '#4f46e5',
+                colorLight: '#ffffff',
+            });
+        }
+
+        if (toggleQrBtn && modalQrWrap) {
+            toggleQrBtn.onclick = () => {
+                const isHidden = modalQrWrap.style.display === 'none' || !modalQrWrap.style.display;
+                modalQrWrap.style.display = isHidden ? 'flex' : 'none';
+                toggleQrBtn.textContent = isHidden ? 'Hide QR' : 'Show QR';
+            };
+        }
+
         if (metaDisplay) {
             const badges = [];
             badges.push(`<span class="badge badge--blue">🔒 Encrypted</span>`);
@@ -454,6 +478,41 @@ try {
                 if (ok) Cabin.toast('Link copied to clipboard!', 'success');
             });
         }
+    }
+
+    // QR Code Modal View
+    const showQrBtn       = document.getElementById('showQrBtn');
+    const qrViewModal     = document.getElementById('qrViewModal');
+    const viewPageQrCode  = document.getElementById('viewPageQrCode');
+    const closeQrModalBtn = document.getElementById('closeQrModalBtn');
+
+    if (showQrBtn && qrViewModal && viewPageQrCode) {
+        showQrBtn.addEventListener('click', () => {
+            const url = showQrBtn.dataset.url || window.location.href;
+            if (window.QRCode) {
+                viewPageQrCode.innerHTML = '';
+                new QRCode(viewPageQrCode, {
+                    text: url,
+                    width: 180,
+                    height: 180,
+                    colorDark: '#4f46e5',
+                    colorLight: '#ffffff',
+                });
+            }
+            qrViewModal.style.display = 'flex';
+        });
+
+        if (closeQrModalBtn) {
+            closeQrModalBtn.addEventListener('click', () => {
+                qrViewModal.style.display = 'none';
+            });
+        }
+
+        qrViewModal.addEventListener('click', (e) => {
+            if (e.target === qrViewModal) {
+                qrViewModal.style.display = 'none';
+            }
+        });
     }
 
     // Inline Edit Note Handler

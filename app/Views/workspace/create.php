@@ -152,6 +152,23 @@
                 </div>
             </div>
 
+            <!-- Instant QR Code Section -->
+            <div class="qr-share-section" style="margin: 16px 0; text-align: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <div style="font-size: 13px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 6px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                        Scan on Mobile (Instant QR)
+                    </div>
+                    <button type="button" id="toggleQrBtn" class="btn btn-ghost btn-sm" style="font-size: 12px; padding: 4px 8px; color: #7c3aed;">
+                        Show QR
+                    </button>
+                </div>
+                <div id="modalQrContainer" style="display: none; justify-content: center; align-items: center; flex-direction: column; gap: 10px; margin-top: 10px;">
+                    <div id="modalQrCode" style="display: inline-block; padding: 8px; background: white; border-radius: 12px; border: 1px solid #e2e8f0;"></div>
+                    <p style="font-size: 11.5px; color: #64748b; margin: 0;">Scan with camera to open instantly on your phone</p>
+                </div>
+            </div>
+
             <div class="note-meta-display" id="noteMetaDisplay"></div>
         </div>
 
