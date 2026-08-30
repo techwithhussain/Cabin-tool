@@ -14,16 +14,16 @@
             <div class="hero-content">
                 <div class="hero-badge">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2L3 7V12C3 16.55 6.84 20.74 12 22C17.16 20.74 21 16.55 21 12V7L12 2Z" fill="currentColor"/></svg>
-                    100% Secure &bull; Private &bull; Auto-Delete
+                    AES-256 Encrypted &bull; Burn After Read &bull; 100% Anonymous
                 </div>
 
                 <h1 class="hero-title">
-                    <span class="hero-title--line1">Private Notes. Secure Sharing.</span><br>
-                    <span class="hero-title--accent">Total Peace of Mind.</span>
+                    <span class="hero-title--line1">Self-Destructing Notes &amp;</span><br>
+                    <span class="hero-title--accent">Encrypted Private Sharing</span>
                 </h1>
 
                 <p class="hero-description">
-                    Create notes, set auto-destruct timers, and send sensitive information securely. No sign up. No tracking. Just simple, private, and encrypted sharing.
+                    Create self-destructing notes, set burn-after-read or custom auto-delete timers, and share sensitive passwords or data securely. No sign up required, zero logs, 100% private.
                 </p>
 
                 <div class="hero-actions">
@@ -41,19 +41,19 @@
                         <span class="trust-icon trust-icon--purple">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2L3 7V12C3 16.55 6.84 20.74 12 22C17.16 20.74 21 16.55 21 12V7L12 2Z" fill="#8B5CF6"/></svg>
                         </span>
-                        End-to-End Encrypted
+                        AES-256 Encryption
                     </div>
                     <div class="trust-item">
                         <span class="trust-icon trust-icon--green">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
                         </span>
-                        Auto Delete After Expiry
+                        Burn After Read / Auto-Delete
                     </div>
                     <div class="trust-item">
                         <span class="trust-icon trust-icon--orange">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
                         </span>
-                        No Sign Up Required
+                        No Sign Up / Anonymous
                     </div>
                 </div>
             </div>
@@ -446,13 +446,34 @@
         <div class="faq-list" data-animate="fade-up" data-delay="100">
             <?php
             $faqs = [
-                ['q' => 'Is Cabin really free?', 'a' => 'Yes! Cabin is completely free to use. No account, no subscription, no hidden fees. Just create your note and share it.'],
-                ['q' => 'How is my note encrypted?', 'a' => 'All note content is encrypted using AES-256-GCM encryption before being stored in our database. The encryption key is never stored alongside your data.'],
-                ['q' => 'What happens when a note expires?', 'a' => 'When a note expires, it is permanently and irreversibly deleted from our servers — including all encrypted content. There is no way to recover it.'],
-                ['q' => 'Can I set a password for my note?', 'a' => 'Yes! You can optionally set a password using Argon2id hashing. Anyone who opens the link will need to enter the correct password to view the content.'],
-                ['q' => 'What is "Burn After Read"?', 'a' => 'When Burn After Read is enabled, the note is permanently deleted the moment it is first viewed. It can never be accessed again.'],
-                ['q' => 'Do you track who views my note?', 'a' => 'We only store an anonymised view count and hashed IP addresses. We do not store full IP addresses, personal information, or link views to specific users.'],
-                ['q' => 'Can I choose my own custom URL?', 'a' => 'Yes! You can choose custom URLs like cabinn.in/my-custom-note when creating your note, with full privacy protection.'],
+                [
+                    'q' => 'What is a self-destructing note and how does Burn After Read work?',
+                    'a' => 'A self-destructing note is an encrypted private message designed to disappear automatically. When you enable "Burn After Read", the note is completely and irreversibly deleted from our database the exact moment the recipient views it.'
+                ],
+                [
+                    'q' => 'Is Cabin a secure alternative to Privnote and OneTimeSecret?',
+                    'a' => 'Yes! Cabin is a modern, privacy-first alternative to Privnote and OneTimeSecret. We use military-grade AES-256-GCM encryption, require zero registration, keep no logs or trackers, and allow password protection and custom timers.'
+                ],
+                [
+                    'q' => 'Can I use Cabin to share passwords and API keys securely?',
+                    'a' => 'Absolutely. Cabin is built specifically for developers, teams, and individuals to safely share sensitive credentials, passwords, confidential tokens, and private messages without leaving traces in email or chat apps.'
+                ],
+                [
+                    'q' => 'How is my note encrypted?',
+                    'a' => 'All note contents are encrypted with AES-256-GCM authenticated encryption before being saved. The encryption keys are never stored alongside your content, ensuring that not even our servers can read your private notes.'
+                ],
+                [
+                    'q' => 'What happens when a note expires?',
+                    'a' => 'When a note reaches its set expiration time (e.g. 5 minutes, 1 hour, 24 hours), it is permanently wiped from the database. There are no backups, caches, or recovery methods.'
+                ],
+                [
+                    'q' => 'Do I need to sign up or create an account?',
+                    'a' => 'No registration or login is ever required. You can create and share encrypted self-destructing notes anonymously in seconds.'
+                ],
+                [
+                    'q' => 'Can I set a password and a custom URL for my note?',
+                    'a' => 'Yes! You can set an optional password hashed with Argon2id and create custom short links like cabinn.in/my-secret-note with complete end-to-end security.'
+                ],
             ];
             foreach ($faqs as $i => $faq): ?>
             <div class="faq-item" id="faq-<?= $i ?>">
@@ -466,6 +487,30 @@
             </div>
             <?php endforeach; ?>
         </div>
+
+        <!-- FAQ Schema JSON-LD for Google Rich Snippets -->
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+                <?php
+                $schemaFaqs = [];
+                foreach ($faqs as $faq) {
+                    $schemaFaqs[] = json_encode([
+                        '@type' => 'Question',
+                        'name' => $faq['q'],
+                        'acceptedAnswer' => [
+                            '@type' => 'Answer',
+                            'text' => $faq['a']
+                        ]
+                    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+                }
+                echo implode(",\n", $schemaFaqs);
+                ?>
+            ]
+        }
+        </script>
     </div>
 </section>
 

@@ -40,7 +40,7 @@ $_currentPath = $_reqPath;
     <title><?= $_title ?></title>
     <meta name="title"       content="<?= $_title ?>">
     <meta name="description" content="<?= $_desc ?>">
-    <meta name="keywords"    content="secure notes, private notes, encrypted notes, burn after read, self destructing notes, no signup notes, AES-256, cabin notes">
+    <meta name="keywords"    content="self destructing notes, burn after read note, encrypted private notes, privnote alternative, share passwords securely, temporary note sharing, secure online notepad, aes-256 encrypted paste, cabin notes">
     <meta name="author"      content="Hussain Lone – Tech With Hussain">
     <meta name="publisher"   content="Tech With Hussain">
     <meta name="language"    content="en">
@@ -124,6 +124,10 @@ $_currentPath = $_reqPath;
 
     <?php if ($_currentPath === '/about'): ?>
     <link rel="stylesheet" href="/assets/css/about.css">
+    <?php endif; ?>
+
+    <?php if (str_starts_with($_currentPath, '/blog')): ?>
+    <link rel="stylesheet" href="/assets/css/blog.css">
     <?php endif; ?>
 
     <?php
@@ -256,6 +260,7 @@ $_currentPath = $_reqPath;
                 <li role="none"><a href="/#features"    role="menuitem">Features</a></li>
                 <li role="none"><a href="/#how-it-works" role="menuitem">How It Works</a></li>
                 <li role="none"><a href="/#use-cases"   role="menuitem">Use Cases</a></li>
+                <li role="none"><a href="/blog"         role="menuitem">Blog</a></li>
                 <li role="none"><a href="/about"         role="menuitem">About</a></li>
                 <li role="none"><a href="/#faq"          role="menuitem">FAQ</a></li>
                 <li role="none"><a href="/#contact"      role="menuitem">Contact</a></li>
@@ -318,6 +323,7 @@ $_currentPath = $_reqPath;
                         <li><a href="/#features">Features</a></li>
                         <li><a href="/#how-it-works">How It Works</a></li>
                         <li><a href="/#use-cases">Use Cases</a></li>
+                        <li><a href="/blog">Blog &amp; Guides</a></li>
                         <li><a href="/about">About Creator</a></li>
                         <li><a href="/#faq">FAQ</a></li>
                         <li><a href="/create">Create a Note</a></li>

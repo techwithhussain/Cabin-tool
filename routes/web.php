@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use App\Core\Router;
 use App\Controllers\HomeController;
+use App\Controllers\BlogController;
+use App\Controllers\AdminBlogController;
 use App\Controllers\NoteController;
 use App\Controllers\AdminController;
 use App\Controllers\CronController;
@@ -21,10 +23,12 @@ use App\Middleware\AdminAuthMiddleware;
 function registerWebRoutes(Router $router): void
 {
     // ─────────────────────────────────────────────
-    // Public – Landing
+    // Public – Landing & Blog
     // ─────────────────────────────────────────────
     $router->get('/', [HomeController::class, 'index']);
     $router->get('/about', [HomeController::class, 'about']);
+    $router->get('/blog', [BlogController::class, 'index']);
+    $router->get('/blog/{slug}', [BlogController::class, 'show']);
 
     // ─────────────────────────────────────────────
     // Legal Pages
@@ -84,6 +88,14 @@ function registerWebRoutes(Router $router): void
         $router->get('/admin/logs',      [AdminController::class, 'logs']);
         $router->post('/admin/logout',   [AdminController::class, 'logout'], [CsrfMiddleware::class]);
         $router->post('/admin/note/{slug}/delete', [AdminController::class, 'deleteNote'], [CsrfMiddleware::class]);
+
+        // Blog Management
+        $router->get('/admin/blogs',              [AdminBlogController::class, 'list']);
+        $router->get('/admin/blogs/create',       [AdminBlogController::class, 'createForm']);
+        $router->post('/admin/blogs/create',      [AdminBlogController::class, 'create'], [CsrfMiddleware::class]);
+        $router->get('/admin/blogs/edit/{id}',    [AdminBlogController::class, 'editForm']);
+        $router->post('/admin/blogs/edit/{id}',   [AdminBlogController::class, 'update'], [CsrfMiddleware::class]);
+        $router->post('/admin/blogs/delete/{id}', [AdminBlogController::class, 'delete'], [CsrfMiddleware::class]);
     });
 
     // ─────────────────────────────────────────────

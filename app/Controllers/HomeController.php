@@ -26,8 +26,8 @@ class HomeController
 
         $response->view('landing.index', [
             'stats'      => $stats,
-            'pageTitle'  => 'Cabin – Secure Notes & Private Sharing | AES-256 Encrypted',
-            'pageDesc'   => 'Create AES-256 encrypted private notes, set auto-destruct timers, and share them securely. No sign up. No tracking. No logs. Just pure private sharing.',
+            'pageTitle'  => 'Cabin – Self Destructing Notes & Encrypted Private Sharing (AES-256)',
+            'pageDesc'   => 'Create free self-destructing notes and burn-after-read messages. Share passwords, sensitive data, and private text with AES-256 encryption. 100% anonymous, no sign up required.',
             'schemaType' => 'home',
             'breadcrumbs' => [],  // Homepage has no breadcrumbs
         ], 'main');

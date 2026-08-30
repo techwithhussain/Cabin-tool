@@ -136,7 +136,33 @@ CREATE TABLE IF NOT EXISTS `admin_sessions` (
     UNIQUE KEY `idx_admin_token` (`token_hash`),
     KEY `idx_admin_expires` (`expires_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-  COMMENT='Admin panel session tokens';
+-- ─────────────────────────────────────────────
+-- Table: blogs
+-- SEO and Marketing Blog Posts
+-- ─────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS `blogs` (
+    `id`               BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `slug`             VARCHAR(191)    NOT NULL UNIQUE COMMENT 'URL slug',
+    `title`            VARCHAR(255)    NOT NULL,
+    `summary`          TEXT            NULL,
+    `content`          LONGTEXT        NOT NULL,
+    `cover_image`      VARCHAR(512)    NULL,
+    `category`         VARCHAR(64)     NOT NULL DEFAULT 'Security',
+    `author`           VARCHAR(128)    NOT NULL DEFAULT 'Hussain Lone',
+    `meta_title`       VARCHAR(255)    NULL,
+    `meta_description` TEXT            NULL,
+    `meta_keywords`    VARCHAR(512)    NULL,
+    `read_time`        VARCHAR(32)     NOT NULL DEFAULT '4 min read',
+    `status`           ENUM('published', 'draft') NOT NULL DEFAULT 'published',
+    `views`            INT UNSIGNED    NOT NULL DEFAULT 0,
+    `created_at`       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    KEY `idx_blogs_slug` (`slug`),
+    KEY `idx_blogs_status` (`status`),
+    KEY `idx_blogs_created_at` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+  COMMENT='Blog articles and security guides';
 
 SET FOREIGN_KEY_CHECKS = 1;
 
