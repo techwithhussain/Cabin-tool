@@ -178,6 +178,16 @@ class Database
         return $this->pdo;
     }
 
+    /** Check if driver is SQLite */
+    public function isSqlite(): bool
+    {
+        try {
+            return $this->pdo->getAttribute(\PDO::ATTR_DRIVER_NAME) === 'sqlite';
+        } catch (\Throwable) {
+            return false;
+        }
+    }
+
     /**
      * Execute a prepared statement and return the statement
      */

@@ -29,8 +29,15 @@ class BlogController
         $category = $request->query('category');
         $search   = $request->query('q');
 
-        $blogs      = $this->blogRepo->getAll('published', $category, $search, 30);
-        $categories = $this->blogRepo->getCategories();
+        $blogs      = [];
+        $categories = [];
+
+        try {
+            $blogs      = $this->blogRepo->getAll('published', $category, $search, 30);
+            $categories = $this->blogRepo->getCategories();
+        } catch (\Throwable $e) {
+            error_log('[BlogController] Error: ' . $e->getMessage());
+        }
 
         $response->view('blog.index', [
             'blogs'         => $blogs,
@@ -55,7 +62,18 @@ class BlogController
         $appUrl = rtrim($_ENV['APP_URL'] ?? 'https://cabinn.in', '/');
         $slug   = $request->param('slug') ?? '';
 
-        $blog = $this->blogRepo->getBySlug($slug);
+        $blog = null;
+        $recentPosts = [];
+
+        try {
+            $blog = $this->blogRepo->getBySlug($slug);
+            if ($blog) {
+                $this->blogRepo->incrementViews($blog->id);
+                $recentPosts = $this->blogRepo->getRecent(3, $blog->id);
+            }
+        } catch (\Throwable $e) {
+            error_log('[BlogController] Error: ' . $e->getMessage());
+        }
 
         if (!$blog || (!$blog->isPublished() && !isset($_SESSION['admin_logged_in']))) {
             $response->status(404)->view('errors.404', [
@@ -64,11 +82,6 @@ class BlogController
             ], 'minimal');
             return;
         }
-
-        // Increment view count
-        $this->blogRepo->incrementViews($blog->id);
-
-        $recentPosts = $this->blogRepo->getRecent(3, $blog->id);
 
         $response->view('blog.show', [
             'blog'        => $blog,
