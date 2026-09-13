@@ -120,7 +120,10 @@ $_currentPath = $_reqPath;
          CSS — Global (always loaded)
     ═══════════════════════════════════════ -->
     <link rel="stylesheet" href="/assets/css/app.css">
+
+    <?php if ($_currentPath === '/'): ?>
     <link rel="stylesheet" href="/assets/css/landing.css">
+    <?php endif; ?>
 
     <?php if ($_currentPath === '/about'): ?>
     <link rel="stylesheet" href="/assets/css/about.css">
@@ -355,6 +358,8 @@ $_currentPath = $_reqPath;
          JAVASCRIPT — deferred, non-blocking
     ═══════════════════════════════════════ -->
     <script src="/assets/js/app.js" defer></script>
+    <?php if ($_currentPath === '/'): ?>
     <script src="/assets/js/landing.js" defer></script>
+    <?php endif; ?>
 </body>
 </html>

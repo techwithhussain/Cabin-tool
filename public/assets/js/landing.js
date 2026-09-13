@@ -8,7 +8,7 @@
 // FAQ Accordion
 // ─────────────────────────────────────────────
 (function initFaq() {
-    const items = document.querySelectorAll('.faq-item');
+    const items = document.querySelectorAll('.faq-list .faq-item');
     if (!items.length) return;
 
     items.forEach(item => {
