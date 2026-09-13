@@ -73,6 +73,7 @@ class BlogRepository
             }
 
             $this->db->execute($sql);
+            \App\Services\BlogSeedService::seedIfMissing($this);
         } catch (\Throwable $e) {
             error_log("[BlogRepository] Error ensuring table: " . $e->getMessage());
         }
