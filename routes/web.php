@@ -78,6 +78,7 @@ function registerWebRoutes(Router $router): void
     // ─────────────────────────────────────────────
 
     // Login (no auth required)
+    $router->get('/admin', [AdminController::class, 'loginForm']);
     $router->get('/admin/login', [AdminController::class, 'loginForm']);
     $router->post('/admin/login', [AdminController::class, 'login'], [CsrfMiddleware::class]);
 
