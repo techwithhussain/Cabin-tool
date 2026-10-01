@@ -35,7 +35,7 @@ class AdminBlogController
             'blogs'     => $blogs,
             'csrfToken' => $this->csrf->getToken(),
             'message'   => $_SESSION['admin_flash_msg'] ?? null,
-        ], 'main');
+        ], 'minimal');
 
         unset($_SESSION['admin_flash_msg']);
     }
@@ -50,7 +50,7 @@ class AdminBlogController
             'blog'      => null,
             'csrfToken' => $this->csrf->getToken(),
             'action'    => '/admin/blogs/create',
-        ], 'main');
+        ], 'minimal');
     }
 
     /**
@@ -104,7 +104,7 @@ class AdminBlogController
             'blog'      => $blog,
             'csrfToken' => $this->csrf->getToken(),
             'action'    => '/admin/blogs/edit/' . $blog->id,
-        ], 'main');
+        ], 'minimal');
     }
 
     /**

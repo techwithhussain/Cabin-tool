@@ -62,56 +62,56 @@
             </div>
         <?php endif; ?>
 
-        <div class="admin-table-card" style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-            <div class="table-responsive" style="overflow-x: auto;">
-                <table class="admin-table" style="width: 100%; border-collapse: collapse; text-align: left;">
+        <div class="admin-section">
+            <div class="admin-table-wrap">
+                <table class="admin-table">
                     <thead>
-                        <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-size: 12px; text-transform: uppercase; color: #64748b; letter-spacing: 0.05em;">
-                            <th style="padding: 14px 18px;">Title</th>
-                            <th style="padding: 14px 18px;">Category</th>
-                            <th style="padding: 14px 18px;">Status</th>
-                            <th style="padding: 14px 18px;">Views</th>
-                            <th style="padding: 14px 18px;">Date</th>
-                            <th style="padding: 14px 18px; text-align: right;">Actions</th>
+                        <tr>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Views</th>
+                            <th>Date</th>
+                            <th style="text-align: right;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if (empty($blogs)): ?>
                             <tr>
-                                <td colspan="6" style="padding: 30px; text-align: center; color: #94a3b8;">No blog posts created yet.</td>
+                                <td colspan="6" class="admin-empty">No blog posts created yet.</td>
                             </tr>
                         <?php else: ?>
                             <?php foreach ($blogs as $blog): ?>
-                            <tr style="border-bottom: 1px solid #f1f5f9; font-size: 14px;">
-                                <td style="padding: 14px 18px;">
-                                    <div style="font-weight: 600; color: #1e293b;"><?= htmlspecialchars($blog->title) ?></div>
-                                    <div style="font-size: 12px; color: #64748b;">/blog/<?= htmlspecialchars($blog->slug) ?></div>
+                            <tr>
+                                <td>
+                                    <div style="font-weight: 600; color: var(--color-text-primary); margin-bottom: 2px;"><?= htmlspecialchars($blog->title) ?></div>
+                                    <div style="font-size: 12px; color: var(--color-text-muted); font-family: var(--font-mono);">/blog/<?= htmlspecialchars($blog->slug) ?></div>
                                 </td>
-                                <td style="padding: 14px 18px;">
-                                    <span style="display: inline-block; padding: 3px 10px; background: #ede9fe; color: #7c3aed; font-size: 12px; font-weight: 600; border-radius: 999px;">
+                                <td>
+                                    <span class="badge badge--purple">
                                         <?= htmlspecialchars($blog->category) ?>
                                     </span>
                                 </td>
-                                <td style="padding: 14px 18px;">
+                                <td>
                                     <?php if ($blog->isPublished()): ?>
-                                        <span style="display: inline-block; padding: 3px 10px; background: #dcfce7; color: #166534; font-size: 12px; font-weight: 600; border-radius: 999px;">Published</span>
+                                        <span class="badge badge--green">Published</span>
                                     <?php else: ?>
-                                        <span style="display: inline-block; padding: 3px 10px; background: #fef3c7; color: #92400e; font-size: 12px; font-weight: 600; border-radius: 999px;">Draft</span>
+                                        <span class="badge badge--orange">Draft</span>
                                     <?php endif; ?>
                                 </td>
-                                <td style="padding: 14px 18px; color: #475569; font-weight: 500;">
+                                <td style="font-weight: 500;">
                                     <?= number_format($blog->views) ?>
                                 </td>
-                                <td style="padding: 14px 18px; color: #64748b; font-size: 13px;">
+                                <td style="color: var(--color-text-muted); font-size: 13px;">
                                     <?= date('M d, Y', strtotime($blog->createdAt)) ?>
                                 </td>
-                                <td style="padding: 14px 18px; text-align: right;">
+                                <td style="text-align: right;">
                                     <div style="display: inline-flex; gap: 8px; align-items: center;">
-                                        <a href="/blog/<?= htmlspecialchars($blog->slug) ?>" target="_blank" class="btn btn-sm btn-outline" title="View Public Post" style="padding: 4px 8px; font-size: 12px;">View</a>
-                                        <a href="/admin/blogs/edit/<?= $blog->id ?>" class="btn btn-sm btn-primary" title="Edit Post" style="padding: 4px 10px; font-size: 12px;">Edit</a>
+                                        <a href="/blog/<?= htmlspecialchars($blog->slug) ?>" target="_blank" class="admin-action-link" title="View Public Post">View</a>
+                                        <a href="/admin/blogs/edit/<?= $blog->id ?>" class="admin-action-link" title="Edit Post">Edit</a>
                                         <form method="POST" action="/admin/blogs/delete/<?= $blog->id ?>" onsubmit="return confirm('Are you sure you want to delete this blog post?');" style="display: inline;">
                                             <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
-                                            <button type="submit" class="btn btn-sm btn-danger" style="padding: 4px 8px; font-size: 12px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer;">Delete</button>
+                                            <button type="submit" class="admin-action-link admin-action-link--danger">Delete</button>
                                         </form>
                                     </div>
                                 </td>
